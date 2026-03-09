@@ -1,5 +1,6 @@
 import Component from "@glimmer/component";
 import { fn } from "@ember/helper";
+import { on } from "@ember/modifier";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import ScholarSearchBox from "./scholar-search-box";
