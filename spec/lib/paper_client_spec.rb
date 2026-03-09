@@ -5,12 +5,17 @@ RSpec.describe DiscourseScholar::PaperClient do
 
   before do
     SiteSetting.discourse_scholar_api_base_url = "https://open.scholay.com"
+    SiteSetting.discourse_scholar_api_key = "scholar-api-key"
     SiteSetting.discourse_scholar_api_proxy_secret = "proxy-secret"
   end
 
   describe "#fetch" do
     it "returns parsed paper data on success" do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/get").with(
+        headers: {
+          "Authorization" => "Bearer scholar-api-key",
+          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
+        },
         body: {
           id: "paper-1",
           fields: DiscourseScholar::PAPER_FIELDS.join(","),
@@ -35,6 +40,10 @@ RSpec.describe DiscourseScholar::PaperClient do
 
     it "raises a not found error when the upstream payload reports no paper" do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/get").with(
+        headers: {
+          "Authorization" => "Bearer scholar-api-key",
+          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
+        },
         body: {
           id: "missing-paper",
           fields: DiscourseScholar::PAPER_FIELDS.join(","),
@@ -55,6 +64,10 @@ RSpec.describe DiscourseScholar::PaperClient do
 
     it "raises an upstream error when the remote service fails" do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/get").with(
+        headers: {
+          "Authorization" => "Bearer scholar-api-key",
+          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
+        },
         body: {
           id: "paper-1",
           fields: DiscourseScholar::PAPER_FIELDS.join(","),
@@ -86,6 +99,10 @@ RSpec.describe DiscourseScholar::PaperClient do
       SiteSetting.discourse_scholar_api_base_url = "https://OPEN.SCHOLAY.COM/proxy"
 
       stub_request(:post, "https://open.scholay.com/proxy/v1/stc/papers/get").with(
+        headers: {
+          "Authorization" => "Bearer scholar-api-key",
+          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
+        },
         body: {
           id: "paper-1",
           fields: DiscourseScholar::PAPER_FIELDS.join(","),
@@ -106,6 +123,15 @@ RSpec.describe DiscourseScholar::PaperClient do
       )
 
       expect(client.fetch("paper-1")).to include("title" => "Paper title")
+    end
+
+    it "requires an API key" do
+      SiteSetting.discourse_scholar_api_key = ""
+
+      expect { client.fetch("paper-1") }.to raise_error(
+        described_class::MissingConfiguration,
+        I18n.t("discourse_scholar.errors.missing_api_key"),
+      )
     end
   end
 end

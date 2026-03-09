@@ -2,10 +2,12 @@ en:
   site_settings:
     discourse_scholar_enabled: "Enable the public scholar pages plugin"
     discourse_scholar_api_base_url: "Base URL for the OpenScholay API"
+    discourse_scholar_api_key: "Bearer API key for OpenScholay"
     discourse_scholar_api_proxy_secret: "Proxy secret for requests to OpenScholay"
   discourse_scholar:
     errors:
       invalid_base_url: "The scholar API base URL must be the HTTPS OpenScholay host."
+      missing_api_key: "The scholar API key has not been configured."
       missing_proxy_secret: "The scholar API proxy secret has not been configured."
       not_found: "Scholar resource not found."
       paper_not_found: "Paper not found."

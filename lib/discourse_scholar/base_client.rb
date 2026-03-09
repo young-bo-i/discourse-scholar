@@ -21,6 +21,7 @@ module DiscourseScholar
         connection.post(path) do |request|
           request.headers["Content-Type"] = "application/json"
           request.headers["Accept"] = "application/json"
+          request.headers["Authorization"] = "Bearer #{api_key}"
           request.headers["X-RapidAPI-Proxy-Secret"] = proxy_secret
           request.body = body.to_json
         end
@@ -77,6 +78,17 @@ module DiscourseScholar
       end
 
       secret
+    end
+
+    def api_key
+      key =
+        ENV["DISCOURSE_SCHOLAR_API_KEY"].presence || SiteSetting.discourse_scholar_api_key
+
+      if key.blank?
+        raise MissingConfiguration, I18n.t("discourse_scholar.errors.missing_api_key")
+      end
+
+      key
     end
 
     def validated_base_url
