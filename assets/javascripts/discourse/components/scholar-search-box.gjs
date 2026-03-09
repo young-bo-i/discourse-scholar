@@ -125,8 +125,8 @@ export default class ScholarSearchBox extends Component {
           value={{this.currentQuery}}
           placeholder={{i18n "scholar.search.placeholder"}}
           autocomplete="off"
-          {{did-insert this.syncInitialQuery}}
-          {{did-update this.syncInitialQuery @initialQuery}}
+          {{didInsert this.syncInitialQuery}}
+          {{didUpdate this.syncInitialQuery @initialQuery}}
           {{on "input" this.handleInput}}
         />
       </form>
