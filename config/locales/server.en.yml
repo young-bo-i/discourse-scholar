@@ -1,0 +1,15 @@
+en:
+  site_settings:
+    discourse_scholar_enabled: "Enable the public scholar pages plugin"
+    discourse_scholar_api_base_url: "Base URL for the OpenScholay API"
+    discourse_scholar_api_proxy_secret: "Proxy secret for requests to OpenScholay"
+  discourse_scholar:
+    errors:
+      invalid_base_url: "The scholar API base URL must be the HTTPS OpenScholay host."
+      missing_proxy_secret: "The scholar API proxy secret has not been configured."
+      not_found: "Scholar resource not found."
+      paper_not_found: "Paper not found."
+      author_not_found: "Author not found."
+      upstream_unavailable: "The scholar service is temporarily unavailable."
+      upstream_error: "The scholar service returned an error."
+      invalid_response: "The scholar service returned an invalid response."

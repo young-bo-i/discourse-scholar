@@ -1,0 +1,9 @@
+discourse_scholar:
+  discourse_scholar_enabled:
+    default: false
+    client: true
+  discourse_scholar_api_base_url:
+    default: "https://open.scholay.com"
+  discourse_scholar_api_proxy_secret:
+    default: ""
+    secret: true

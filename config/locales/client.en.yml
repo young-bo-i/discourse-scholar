@@ -1,0 +1,57 @@
+en:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_scholar: "Scholar"
+  js:
+    scholar:
+      search:
+        placeholder: "Search papers or authors"
+        loading: "Loading suggestions..."
+        unavailable: "Search is temporarily unavailable."
+        empty_papers: "No papers found for this query."
+        empty_authors: "No authors found for this query."
+        types:
+          paper: "Paper"
+          author: "Author"
+        sections:
+          papers: "Papers"
+          authors: "Authors"
+      paper:
+        meta:
+          venue: "Venue"
+          year: "Year"
+          publication_date: "Published"
+          doi: "DOI"
+          paper_id: "Paper ID"
+        sections:
+          abstract: "Abstract"
+          fields_of_study: "Fields of study"
+          metrics: "Metrics"
+          links: "Links"
+        metrics:
+          citations: "Citations"
+          references: "References"
+          open_access: "Open access"
+        states:
+          no_abstract: "No abstract is available for this paper."
+          no_authors: "Author information is unavailable."
+          no_fields: "No fields of study are available."
+          unavailable: "Paper details are temporarily unavailable."
+        links:
+          source: "Source page"
+          pdf: "Open-access PDF"
+      author:
+        sections:
+          affiliations: "Affiliations"
+          papers: "Papers"
+          metrics: "Metrics"
+        metrics:
+          papers: "Papers"
+          citations: "Citations"
+          h_index: "H-index"
+        states:
+          no_affiliations: "Affiliation information is unavailable."
+          no_papers: "No papers are available for this author."
+          unavailable: "Author details are temporarily unavailable."

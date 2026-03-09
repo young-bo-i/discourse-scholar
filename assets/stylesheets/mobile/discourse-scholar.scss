@@ -1,0 +1,21 @@
+.scholar-page,
+.paper-detail-page {
+  padding: 1.25rem 0.75rem 3rem;
+}
+
+.scholar-page__hero-content,
+.scholar-page__card,
+.paper-detail-page__hero-content,
+.paper-detail-page__card {
+  padding: 1rem;
+}
+
+.scholar-page__layout,
+.paper-detail-page__layout {
+  grid-template-columns: 1fr;
+}
+
+.scholar-page__title,
+.paper-detail-page__title {
+  font-size: 1.8rem;
+}
