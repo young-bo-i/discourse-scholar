@@ -144,12 +144,19 @@ body.scholar-active {
 
   .scholar-search-box__form {
     margin: 0;
+    border-radius: 6px;
   }
 
   .scholar-search-box__input {
     padding: 0.45rem 0.9rem;
     font-size: 0.9rem;
-    border-radius: 6px;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .scholar-search-box__submit {
+    padding: 0.45rem;
+    width: 34px;
+    border-radius: 0 6px 6px 0;
   }
 
   .scholar-search-box__suggestions {
@@ -1351,17 +1358,27 @@ body.scholar-active {
 
 .scholar-search-box__form {
   display: flex;
-}
-
-.scholar-search-box__input {
-  width: 100%;
-  padding: 0.75rem 1rem;
+  align-items: center;
   border: 1px solid var(--scholar-border);
   border-radius: var(--scholar-card-radius);
   background: var(--scholar-card-bg);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-within {
+    border-color: var(--scholar-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--scholar-accent) 15%, transparent);
+  }
+}
+
+.scholar-search-box__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: var(--scholar-card-radius) 0 0 var(--scholar-card-radius);
+  background: transparent;
   font-size: 1rem;
   color: var(--scholar-text);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
   &::placeholder {
     color: var(--scholar-text-light);
@@ -1369,8 +1386,31 @@ body.scholar-active {
 
   &:focus {
     outline: none;
-    border-color: var(--scholar-accent);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--scholar-accent) 15%, transparent);
+  }
+}
+
+.scholar-search-box__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 100%;
+  padding: 0.6rem;
+  border: 0;
+  border-radius: 0 var(--scholar-card-radius) var(--scholar-card-radius) 0;
+  background: transparent;
+  color: var(--scholar-text-light);
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease;
+
+  .d-icon {
+    font-size: 0.9em;
+  }
+
+  &:hover {
+    color: var(--scholar-accent);
+    background: color-mix(in srgb, var(--scholar-accent) 6%, transparent);
   }
 }
 

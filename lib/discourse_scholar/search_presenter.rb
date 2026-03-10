@@ -3,8 +3,8 @@
 module DiscourseScholar
   class SearchPresenter < BasePresenter
     class << self
-      def results_as_json(results, query)
-        new.results_as_json(results, query)
+      def results_as_json(results, query, page: 1, per_page: 10)
+        new.results_as_json(results, query, page:, per_page:)
       end
 
       def autocomplete_as_json(results, query)

@@ -5,6 +5,7 @@ import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import didUpdate from "@ember/render-modifiers/modifiers/did-update";
+import icon from "discourse/helpers/d-icon";
 import { ajax } from "discourse/lib/ajax";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
@@ -138,6 +139,9 @@ get hasSuggestions() {
           {{on "input" this.handleInput}}
           {{on "blur" this.handleBlur}}
         />
+        <button type="submit" class="scholar-search-box__submit">
+          {{icon "magnifying-glass"}}
+        </button>
       </form>
 
       {{#if this.hasSuggestions}}
