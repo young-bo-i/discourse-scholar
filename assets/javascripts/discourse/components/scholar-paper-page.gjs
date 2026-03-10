@@ -1,6 +1,8 @@
 import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
+import { action } from "@ember/object";
 import icon from "discourse/helpers/d-icon";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
@@ -8,6 +10,8 @@ import { i18n } from "discourse-i18n";
 import ScholarPaperTabs from "./scholar-paper-tabs";
 
 export default class PaperDetailPage extends Component {
+  @tracked abstractExpanded = false;
+
   get paper() {
     return this.args.paper || {};
   }
@@ -22,6 +26,11 @@ export default class PaperDetailPage extends Component {
 
   get errorMessage() {
     return this.paper.error_message || i18n("scholar.paper.states.unavailable");
+  }
+
+  @action
+  toggleAbstract() {
+    this.abstractExpanded = !this.abstractExpanded;
   }
 
   navigateTo(path) {
@@ -98,9 +107,26 @@ export default class PaperDetailPage extends Component {
               {{/if}}
 
               {{#if this.paper.abstract}}
-                <div class="paper-detail-page__abstract">
+                <div
+                  class="paper-detail-page__abstract
+                    {{unless this.abstractExpanded '-collapsed'}}"
+                >
                   <p>{{this.paper.abstract}}</p>
+                  {{#unless this.abstractExpanded}}
+                    <div class="paper-detail-page__abstract-fade"></div>
+                  {{/unless}}
                 </div>
+                <button
+                  type="button"
+                  class="paper-detail-page__expand-btn"
+                  {{on "click" this.toggleAbstract}}
+                >
+                  {{#if this.abstractExpanded}}
+                    {{i18n "scholar.paper.actions.collapse"}}
+                  {{else}}
+                    {{i18n "scholar.paper.actions.expand"}}
+                  {{/if}}
+                </button>
               {{else}}
                 <p
                   class="paper-detail-page__no-data"

@@ -57,6 +57,8 @@ en:
         actions:
           view_source: "View Publisher"
           open_pdf: "Download PDF"
+          expand: "Expand"
+          collapse: "Collapse"
         tabs:
           citations: "Citations"
           references: "References"

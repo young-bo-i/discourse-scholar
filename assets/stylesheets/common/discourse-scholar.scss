@@ -1,20 +1,23 @@
 // ============================================================
-// Design tokens
+// Design tokens — derived from Discourse theme variables
+// so they adapt to light and dark mode automatically
 // ============================================================
 
 :root {
-  --scholar-blue: #1857b6;
-  --scholar-blue-hover: #104a9e;
+  --scholar-accent: var(--tertiary);
+  --scholar-accent-hover: var(--tertiary-hover);
   --scholar-orange: #e8a32e;
-  --scholar-bg: #f5f5f5;
-  --scholar-card-bg: #fff;
-  --scholar-card-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+  --scholar-bg: var(--secondary);
+  --scholar-card-bg: var(--secondary);
+  --scholar-card-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 6%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--primary) 5%, transparent);
   --scholar-card-radius: 8px;
-  --scholar-border: #e8e8e8;
-  --scholar-text: #333;
-  --scholar-text-secondary: #6b6b6b;
-  --scholar-text-light: #999;
+  --scholar-border: color-mix(in srgb, var(--primary) 12%, transparent);
+  --scholar-text: var(--primary);
+  --scholar-text-secondary: var(--primary-medium);
+  --scholar-text-light: var(--primary-low-mid);
   --scholar-max-width: 1200px;
+  --scholar-card-elevated: color-mix(in srgb, var(--primary) 3%, var(--secondary));
 }
 
 // ============================================================
@@ -84,9 +87,9 @@ body.scholar-active {
   transition: all 0.15s ease;
 
   &:hover {
-    border-color: var(--scholar-blue);
-    color: var(--scholar-blue);
-    background: color-mix(in srgb, var(--scholar-blue) 5%, transparent);
+    border-color: var(--scholar-accent);
+    color: var(--scholar-accent);
+    background: color-mix(in srgb, var(--scholar-accent) 5%, transparent);
   }
 }
 
@@ -110,11 +113,11 @@ body.scholar-active {
   transition: color 0.15s ease;
 
   .d-icon {
-    color: var(--scholar-blue);
+    color: var(--scholar-accent);
   }
 
   &:hover {
-    color: var(--scholar-blue);
+    color: var(--scholar-accent);
   }
 }
 
@@ -160,7 +163,7 @@ body.scholar-active {
   transition: border-color 0.15s ease;
 
   &:hover {
-    border-color: var(--scholar-blue);
+    border-color: var(--scholar-accent);
   }
 
   img {
@@ -174,15 +177,15 @@ body.scholar-active {
   padding: 0.4rem 1rem;
   border: 0;
   border-radius: 6px;
-  background: var(--scholar-blue);
-  color: #fff;
+  background: var(--scholar-accent);
+  color: var(--secondary);
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.15s ease;
 
   &:hover {
-    background: var(--scholar-blue-hover);
+    background: var(--scholar-accent-hover);
   }
 }
 
@@ -192,7 +195,7 @@ body.scholar-active {
 
 .scholar-body {
   min-height: calc(100vh - 58px);
-  background: var(--scholar-bg);
+  background: var(--secondary);
 }
 
 // ============================================================
@@ -222,7 +225,7 @@ body.scholar-active {
   line-height: 1.2;
 
   .d-icon {
-    color: var(--scholar-blue);
+    color: var(--scholar-accent);
     margin-right: 0.3rem;
   }
 }
@@ -335,7 +338,7 @@ body.scholar-active {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--scholar-blue);
+  color: var(--scholar-accent);
   font: inherit;
   cursor: pointer;
   text-decoration: none;
@@ -358,7 +361,7 @@ body.scholar-active {
   margin-bottom: 0.5rem;
 
   strong {
-    color: var(--scholar-blue);
+    color: var(--scholar-accent);
   }
 
   span + span::before {
@@ -382,7 +385,8 @@ body.scholar-active {
 }
 
 .paper-detail-page__abstract {
-  margin-bottom: 1.25rem;
+  position: relative;
+  margin-bottom: 0;
   border-top: 1px solid var(--scholar-border);
   padding-top: 1rem;
 
@@ -391,6 +395,39 @@ body.scholar-active {
     color: var(--scholar-text);
     font-size: 0.95rem;
     line-height: 1.7;
+  }
+
+  &.-collapsed p {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.paper-detail-page__abstract-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5em;
+  background: linear-gradient(transparent, var(--scholar-card-bg));
+  pointer-events: none;
+}
+
+.paper-detail-page__expand-btn {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--scholar-accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1.25rem;
+
+  &:hover {
+    text-decoration: underline;
   }
 }
 
@@ -427,22 +464,22 @@ body.scholar-active {
   }
 
   &:hover {
-    border-color: var(--scholar-blue);
-    color: var(--scholar-blue);
+    border-color: var(--scholar-accent);
+    color: var(--scholar-accent);
   }
 
   &.-primary {
-    background: var(--scholar-blue);
-    border-color: var(--scholar-blue);
-    color: #fff;
+    background: var(--scholar-accent);
+    border-color: var(--scholar-accent);
+    color: var(--secondary);
 
     .d-icon {
-      color: #fff;
+      color: var(--secondary);
     }
 
     &:hover {
-      background: var(--scholar-blue-hover);
-      border-color: var(--scholar-blue-hover);
+      background: var(--scholar-accent-hover);
+      border-color: var(--scholar-accent-hover);
     }
   }
 }
@@ -466,14 +503,14 @@ body.scholar-active {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #2e7d32;
+    color: var(--success);
     font-weight: 600;
     font-size: 0.9rem;
-    background: #e8f5e9;
-    border: 1px solid #c8e6c9;
+    background: color-mix(in srgb, var(--success) 10%, var(--secondary));
+    border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
 
     .d-icon {
-      color: #2e7d32;
+      color: var(--success);
     }
   }
 
@@ -530,7 +567,7 @@ body.scholar-active {
     word-break: break-word;
 
     a {
-      color: var(--scholar-blue);
+      color: var(--scholar-accent);
       text-decoration: none;
 
       &:hover {
@@ -575,7 +612,7 @@ body.scholar-active {
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--scholar-blue);
+    background: var(--scholar-accent);
     opacity: 0;
     transition: opacity 0.15s ease;
   }
@@ -585,7 +622,7 @@ body.scholar-active {
   }
 
   &.-active {
-    color: var(--scholar-blue);
+    color: var(--scholar-accent);
 
     &::after {
       opacity: 1;
@@ -646,11 +683,11 @@ body.scholar-active {
   font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.4;
-  color: var(--scholar-blue);
+  color: var(--scholar-accent);
   transition: color 0.15s ease;
 
   &:hover {
-    color: var(--scholar-blue-hover);
+    color: var(--scholar-accent-hover);
     text-decoration: underline;
   }
 }
@@ -670,11 +707,11 @@ body.scholar-active {
 }
 
 .scholar-result-card__authors {
-  color: var(--scholar-blue);
+  color: var(--scholar-accent);
 }
 
 .scholar-result-card__venue {
-  color: var(--scholar-blue);
+  color: var(--scholar-accent);
 }
 
 .scholar-result-card__year {
@@ -687,8 +724,8 @@ body.scholar-active {
   gap: 0.25rem;
   padding: 0.15rem 0.6rem;
   border-radius: 4px;
-  background: color-mix(in srgb, var(--scholar-orange) 15%, transparent);
-  color: #8b6914;
+  background: color-mix(in srgb, var(--scholar-orange) 15%, var(--secondary));
+  color: var(--scholar-orange);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -745,8 +782,8 @@ body.scholar-active {
   height: 72px;
   margin: 0 auto 0.75rem;
   border-radius: 50%;
-  background: var(--scholar-blue);
-  color: #fff;
+  background: var(--scholar-accent);
+  color: var(--secondary);
   font-size: 1.5rem;
 }
 
@@ -897,8 +934,8 @@ body.scholar-active {
 
   &:focus {
     outline: none;
-    border-color: var(--scholar-blue);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--scholar-blue) 15%, transparent);
+    border-color: var(--scholar-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--scholar-accent) 15%, transparent);
   }
 }
 
@@ -929,7 +966,7 @@ body.scholar-active {
   transition: background 0.1s ease;
 
   &:hover {
-    background: color-mix(in srgb, var(--scholar-blue) 6%, transparent);
+    background: color-mix(in srgb, var(--scholar-accent) 6%, transparent);
   }
 }
 
@@ -964,13 +1001,13 @@ body.scholar-active {
   letter-spacing: 0.03em;
 
   &.-paper {
-    background: color-mix(in srgb, var(--scholar-blue) 10%, transparent);
-    color: var(--scholar-blue);
+    background: color-mix(in srgb, var(--scholar-accent) 10%, transparent);
+    color: var(--scholar-accent);
   }
 
   &.-author {
-    background: color-mix(in srgb, #2e7d32 10%, transparent);
-    color: #2e7d32;
+    background: color-mix(in srgb, var(--success) 10%, transparent);
+    color: var(--success);
   }
 }
 
