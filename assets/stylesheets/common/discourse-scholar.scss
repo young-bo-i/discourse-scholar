@@ -49,15 +49,19 @@ body.scholar-active {
 // ============================================================
 
 .scholar-forum-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   .scholar-logo-icon {
-    width: 20px;
-    height: 17px;
-    color: var(--header-primary);
-    vertical-align: middle;
+    width: 1.15em;
+    height: 1em;
+    opacity: 0.65;
+    transition: opacity 0.15s ease;
   }
 
   &:hover .scholar-logo-icon {
-    color: var(--tertiary);
+    opacity: 1;
   }
 }
 
@@ -164,10 +168,11 @@ body.scholar-active {
     border-radius: 6px;
   }
 
-  .scholar-search-box__input {
-    padding: 0.45rem 0.9rem !important;
+  input.scholar-search-box__input,
+  input.scholar-search-box__input[type="search"] {
+    padding: 0.45rem 0.9rem;
     font-size: 0.9rem;
-    border-radius: 6px 0 0 6px !important;
+    border-radius: 6px 0 0 6px;
   }
 
   .scholar-search-box__submit {
@@ -1386,15 +1391,17 @@ body.scholar-active {
   }
 }
 
-.scholar-search-box__input {
+input.scholar-search-box__input,
+input.scholar-search-box__input[type="search"] {
   flex: 1;
   min-width: 0;
+  width: 100%;
   padding: 0.75rem 1rem;
   margin: 0;
-  border: 0 !important;
+  border: 0;
   border-radius: var(--scholar-card-radius) 0 0 var(--scholar-card-radius);
-  background: transparent !important;
-  box-shadow: none !important;
+  background: transparent;
+  box-shadow: none;
   font-size: 1rem;
   color: var(--scholar-text);
   -webkit-appearance: none;
@@ -1406,8 +1413,9 @@ body.scholar-active {
 
   &:focus {
     outline: none;
-    border: 0 !important;
-    box-shadow: none !important;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
   }
 
   &::-webkit-search-cancel-button,
