@@ -148,13 +148,12 @@ body.scholar-active {
   }
 
   .scholar-search-box__input {
-    padding: 0.45rem 0.9rem;
+    padding: 0.45rem 0.9rem !important;
     font-size: 0.9rem;
-    border-radius: 6px 0 0 6px;
+    border-radius: 6px 0 0 6px !important;
   }
 
   .scholar-search-box__submit {
-    padding: 0.45rem;
     width: 34px;
     border-radius: 0 6px 6px 0;
   }
@@ -1374,11 +1373,15 @@ body.scholar-active {
   flex: 1;
   min-width: 0;
   padding: 0.75rem 1rem;
-  border: 0;
+  margin: 0;
+  border: 0 !important;
   border-radius: var(--scholar-card-radius) 0 0 var(--scholar-card-radius);
-  background: transparent;
+  background: transparent !important;
+  box-shadow: none !important;
   font-size: 1rem;
   color: var(--scholar-text);
+  -webkit-appearance: none;
+  appearance: none;
 
   &::placeholder {
     color: var(--scholar-text-light);
@@ -1386,6 +1389,14 @@ body.scholar-active {
 
   &:focus {
     outline: none;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
   }
 }
 
@@ -1393,10 +1404,11 @@ body.scholar-active {
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: stretch;
   flex-shrink: 0;
   width: 40px;
-  height: 100%;
-  padding: 0.6rem;
+  padding: 0;
+  margin: 0;
   border: 0;
   border-radius: 0 var(--scholar-card-radius) var(--scholar-card-radius) 0;
   background: transparent;
