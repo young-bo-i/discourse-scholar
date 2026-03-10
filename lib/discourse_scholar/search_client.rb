@@ -12,12 +12,12 @@ module DiscourseScholar
     AUTHOR_SEARCH_PATH = "v1/stc/authors/search"
     PAPER_AUTOCOMPLETE_PATH = "v1/stc/papers/autocomplete"
 
-    def search(query)
+    def search(query, offset: 0)
       normalized_query = query.to_s.strip
-      return { papers: [], authors: [] } if normalized_query.blank?
+      return { papers: [], authors: [], total: 0 } if normalized_query.blank?
 
       parallel_map(
-        papers: -> { search_papers(normalized_query, limit: SEARCH_PAPER_LIMIT) },
+        papers: -> { search_papers(normalized_query, limit: SEARCH_PAPER_LIMIT, offset:) },
         authors: -> { search_authors(normalized_query, limit: SEARCH_AUTHOR_LIMIT) },
       )
     end
@@ -34,18 +34,18 @@ module DiscourseScholar
 
     private
 
-    def search_papers(query, limit:)
+    def search_papers(query, limit:, offset: 0)
       data =
-        cached_fetch(search_papers_cache_key(query, limit), expires_in: SEARCH_CACHE_TTL) do
+        cached_fetch(search_papers_cache_key(query, limit, offset), expires_in: SEARCH_CACHE_TTL) do
           post_json(PAPER_SEARCH_PATH, {
             query:,
             limit:,
-            offset: 0,
+            offset:,
             fields: DiscourseScholar::SEARCH_PAPER_FIELDS.join(","),
           }) || {}
         end
 
-      data["items"] || []
+      { items: data["items"] || [], total: data["total"].to_i }
     end
 
     def search_authors(query, limit:)
@@ -82,8 +82,8 @@ module DiscourseScholar
       end
     end
 
-    def search_papers_cache_key(query, limit)
-      "discourse-scholar:upstream:papers-search:#{query.downcase}:#{limit}"
+    def search_papers_cache_key(query, limit, offset)
+      "discourse-scholar:upstream:papers-search:#{query.downcase}:#{limit}:#{offset}"
     end
 
     def search_authors_cache_key(query, limit)

@@ -19,6 +19,11 @@ register_svg_icon "file-pdf"
 register_svg_icon "arrow-up-right-from-square"
 register_svg_icon "lock-open"
 register_svg_icon "user"
+register_svg_icon "chevron-left"
+register_svg_icon "chevron-right"
+register_svg_icon "quote-left"
+register_svg_icon "copy"
+register_svg_icon "xmark"
 
 module ::DiscourseScholar
   PLUGIN_NAME = "discourse-scholar"
@@ -41,7 +46,7 @@ module ::DiscourseScholar
     ].freeze
 
   AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex orcid url].freeze
-  SEARCH_PAPER_FIELDS = %w[title authors year publicationDate citationCount venue abstract fieldsOfStudy isOpenAccess].freeze
+  SEARCH_PAPER_FIELDS = %w[title authors year publicationDate citationCount venue abstract fieldsOfStudy isOpenAccess externalIds url].freeze
   SEARCH_AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex].freeze
   AUTOCOMPLETE_AUTHOR_FIELDS = %w[name affiliations].freeze
   RELATED_PAPER_FIELDS = %w[title authors year citationCount venue].freeze

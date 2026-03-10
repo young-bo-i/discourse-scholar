@@ -16,11 +16,19 @@ module DiscourseScholar
       end
     end
 
-    def results_as_json(results, query)
+    def results_as_json(results, query, page: 1, per_page: 10)
+      papers_data = results[:papers] || results["papers"] || {}
+      items = papers_data.is_a?(Hash) ? papers_data[:items] || papers_data["items"] : papers_data
+      total = papers_data.is_a?(Hash) ? (papers_data[:total] || papers_data["total"]).to_i : 0
+      total_pages = per_page > 0 ? (total.to_f / per_page).ceil : 1
+
       {
         query: query.to_s,
-        papers: normalize_papers(results[:papers] || results["papers"]),
+        papers: normalize_papers(items),
         authors: normalize_authors(results[:authors] || results["authors"]),
+        page:,
+        total_papers: total,
+        total_pages: [total_pages, 1].max,
       }
     end
 
@@ -36,6 +44,9 @@ module DiscourseScholar
 
     def normalize_papers(items)
       Array(items).map do |paper|
+        external_ids = value(paper, :externalIds) || {}
+        doi = value(external_ids, :DOI)
+
         {
           id: value(paper, :id),
           route_id: route_id(value(paper, :id)),
@@ -48,7 +59,9 @@ module DiscourseScholar
           citation_count: count_value(paper, :citation_count, :citationCount),
           is_open_access: value(paper, :isOpenAccess, :is_open_access),
           fields_of_study: Array(value(paper, :fieldsOfStudy, :fields_of_study)),
-          authors: normalize_authors_for_paper(paper),
+          authors: normalize_authors_with_ids(paper),
+          doi:,
+          url: value(paper, :url),
           path: "/scholar/paper/#{route_id(value(paper, :id))}",
         }.compact
       end
@@ -105,6 +118,21 @@ module DiscourseScholar
       Array(value(paper, :authors)).filter_map do |author|
         source = author["author"] || author[:author] || author
         value(source, :name)
+      end
+    end
+
+    def normalize_authors_with_ids(paper)
+      Array(value(paper, :authors)).filter_map do |author|
+        source = author["author"] || author[:author] || author
+        name = value(source, :name)
+        next if name.blank?
+
+        author_id = value(source, :authorId, :id)
+        entry = { name: }
+        if author_id.present?
+          entry[:path] = "/scholar/author/#{route_id(author_id)}"
+        end
+        entry
       end
     end
 

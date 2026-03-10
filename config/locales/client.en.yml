@@ -48,6 +48,16 @@ en:
           citations_500: "≥ 500"
           open_access_label: "Access Type"
           open_access_only: "Open access only"
+        pagination:
+          prev: "Previous"
+          next: "Next"
+        actions:
+          publisher: "Publisher"
+          cite: "Cite"
+      cite:
+        title: "Cite Paper"
+        copy: "Copy"
+        copied: "Copied!"
       paper:
         published_in: "Published in"
         meta:

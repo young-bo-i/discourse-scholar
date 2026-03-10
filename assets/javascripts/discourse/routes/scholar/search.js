@@ -6,6 +6,9 @@ export default class ScholarSearchRoute extends DiscourseRoute {
     q: {
       refreshModel: true,
     },
+    page: {
+      refreshModel: true,
+    },
   };
 
   model(params) {
@@ -14,17 +17,24 @@ export default class ScholarSearchRoute extends DiscourseRoute {
         query: "",
         papers: [],
         authors: [],
+        page: 1,
+        total_papers: 0,
+        total_pages: 1,
       };
     }
 
-    return ajax(`/scholar/search.json?q=${encodeURIComponent(params.q)}`).catch(
-      (error) => ({
-        query: params.q,
-        papers: [],
-        authors: [],
-        load_error: true,
-        error_message: error.jqXHR?.responseJSON?.errors?.[0],
-      })
-    );
+    const page = Math.max(parseInt(params.page, 10) || 1, 1);
+    const qs = `q=${encodeURIComponent(params.q)}&page=${page}`;
+
+    return ajax(`/scholar/search.json?${qs}`).catch((error) => ({
+      query: params.q,
+      papers: [],
+      authors: [],
+      page,
+      total_papers: 0,
+      total_pages: 1,
+      load_error: true,
+      error_message: error.jqXHR?.responseJSON?.errors?.[0],
+    }));
   }
 }

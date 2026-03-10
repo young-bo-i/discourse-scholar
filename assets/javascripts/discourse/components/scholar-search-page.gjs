@@ -7,11 +7,13 @@ import icon from "discourse/helpers/d-icon";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
+import ScholarCiteModal from "./scholar-cite-modal";
 
 export default class ScholarSearchPage extends Component {
   @tracked yearFilter = null;
   @tracked minCitations = 0;
   @tracked openAccessOnly = false;
+  @tracked citingPaper = null;
 
   get results() {
     return this.args.results || {};
@@ -31,6 +33,59 @@ export default class ScholarSearchPage extends Component {
 
   get errorMessage() {
     return this.results.error_message || i18n("scholar.search.unavailable");
+  }
+
+  get currentPage() {
+    return this.results.page || 1;
+  }
+
+  get totalPages() {
+    return this.results.total_pages || 1;
+  }
+
+  get totalPapers() {
+    return this.results.total_papers || 0;
+  }
+
+  get showPagination() {
+    return this.totalPages > 1;
+  }
+
+  get hasPrevPage() {
+    return this.currentPage > 1;
+  }
+
+  get hasNextPage() {
+    return this.currentPage < this.totalPages;
+  }
+
+  get prevPage() {
+    return Math.max(1, this.currentPage - 1);
+  }
+
+  get nextPage() {
+    return Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  get pageNumbers() {
+    const current = this.currentPage;
+    const total = this.totalPages;
+    const pages = [];
+    let start = Math.max(1, current - 2);
+    let end = Math.min(total, current + 2);
+
+    if (end - start < 4) {
+      if (start === 1) {
+        end = Math.min(total, start + 4);
+      } else {
+        start = Math.max(1, end - 4);
+      }
+    }
+
+    for (let p = start; p <= end; p++) {
+      pages.push({ num: p, active: p === current });
+    }
+    return pages;
   }
 
   get filteredPapers() {
@@ -107,6 +162,22 @@ export default class ScholarSearchPage extends Component {
   @action
   navigateTo(path) {
     DiscourseURL.routeTo(path);
+  }
+
+  @action
+  goToPage(pageNum) {
+    const q = encodeURIComponent(this.query);
+    DiscourseURL.routeTo(`/scholar/search?q=${q}&page=${pageNum}`);
+  }
+
+  @action
+  openCite(paper) {
+    this.citingPaper = paper;
+  }
+
+  @action
+  closeCite() {
+    this.citingPaper = null;
   }
 
   <template>
@@ -244,7 +315,7 @@ export default class ScholarSearchPage extends Component {
               <span class="scholar-search-page__result-count">
                 {{i18n
                   "scholar.search.result_count"
-                  count=this.filteredPapers.length
+                  count=this.totalPapers
                 }}
               </span>
             </div>
@@ -262,46 +333,118 @@ export default class ScholarSearchPage extends Component {
                         class="scholar-result-card__title"
                       >{{paper.title}}</h3>
                     </button>
+
+                    {{#if paper.authors.length}}
+                      <div class="scholar-result-card__author-chips">
+                        {{#each paper.authors as |author|}}
+                          {{#if author.path}}
+                            <button
+                              type="button"
+                              class="scholar-result-card__author-chip"
+                              {{on "click" (fn this.navigateTo author.path)}}
+                            >{{author.name}}</button>
+                          {{else}}
+                            <span
+                              class="scholar-result-card__author-chip -plain"
+                            >{{author.name}}</span>
+                          {{/if}}
+                        {{/each}}
+                      </div>
+                    {{/if}}
+
                     <div class="scholar-result-card__meta">
-                      {{#if paper.authors.length}}
-                        <span
-                          class="scholar-result-card__authors"
-                        >{{paper.authors}}</span>
+                      {{#if paper.fields_of_study.length}}
+                        {{#each paper.fields_of_study as |field|}}
+                          <span
+                            class="scholar-result-card__field-inline"
+                          >{{field}}</span>
+                        {{/each}}
                       {{/if}}
                       {{#if paper.venue}}
                         <span
                           class="scholar-result-card__venue"
                         >{{paper.venue}}</span>
                       {{/if}}
-                      {{#if paper.year}}
+                      {{#if paper.publication_date}}
                         <span
-                          class="scholar-result-card__year"
+                          class="scholar-result-card__date"
+                        >{{paper.publication_date}}</span>
+                      {{else if paper.year}}
+                        <span
+                          class="scholar-result-card__date"
                         >{{paper.year}}</span>
                       {{/if}}
                     </div>
-                    {{#if paper.fields_of_study.length}}
-                      <div class="scholar-result-card__fields">
-                        {{#each paper.fields_of_study as |field|}}
-                          <span
-                            class="scholar-result-card__field"
-                          >{{field}}</span>
-                        {{/each}}
-                      </div>
-                    {{/if}}
+
                     {{#if paper.abstract}}
                       <p
                         class="scholar-result-card__abstract"
                       >{{paper.abstract}}</p>
                     {{/if}}
-                    {{#if paper.citation_count}}
-                      <span class="scholar-result-card__citations">
-                        {{number paper.citation_count}}
-                        {{i18n "scholar.paper.metrics.citations"}}
-                      </span>
-                    {{/if}}
+
+                    <div class="scholar-result-card__actions">
+                      {{#if paper.citation_count}}
+                        <span class="scholar-result-card__citations">
+                          {{icon "quote-left"}}
+                          {{number paper.citation_count}}
+                        </span>
+                      {{/if}}
+                      {{#if paper.url}}
+                        <a
+                          class="scholar-result-card__action-link"
+                          href={{paper.url}}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {{icon "arrow-up-right-from-square"}}
+                          {{i18n "scholar.search.actions.publisher"}}
+                        </a>
+                      {{/if}}
+                      <button
+                        type="button"
+                        class="scholar-result-card__action-link"
+                        {{on "click" (fn this.openCite paper)}}
+                      >
+                        {{icon "quote-left"}}
+                        {{i18n "scholar.search.actions.cite"}}
+                      </button>
+                    </div>
                   </article>
                 {{/each}}
               </div>
+
+              {{#if this.showPagination}}
+                <nav class="scholar-search-page__pagination">
+                  <button
+                    type="button"
+                    class="scholar-search-page__page-btn -prev"
+                    disabled={{unless this.hasPrevPage true}}
+                    {{on "click" (fn this.goToPage this.prevPage)}}
+                  >
+                    {{icon "chevron-left"}}
+                    {{i18n "scholar.search.pagination.prev"}}
+                  </button>
+
+                  {{#each this.pageNumbers as |pg|}}
+                    <button
+                      type="button"
+                      class="scholar-search-page__page-btn -num
+                        {{if pg.active '-active'}}"
+                      {{on "click" (fn this.goToPage pg.num)}}
+                    >{{pg.num}}</button>
+                  {{/each}}
+
+                  <button
+                    type="button"
+                    class="scholar-search-page__page-btn -next"
+                    disabled={{unless this.hasNextPage true}}
+                    {{on "click" (fn this.goToPage this.nextPage)}}
+                  >
+                    {{i18n "scholar.search.pagination.next"}}
+                    {{icon "chevron-right"}}
+                  </button>
+                </nav>
+              {{/if}}
             {{else}}
               <p class="scholar-search-page__empty">{{i18n
                   "scholar.search.empty_papers"
@@ -309,6 +452,13 @@ export default class ScholarSearchPage extends Component {
             {{/if}}
           </main>
         </div>
+      {{/if}}
+
+      {{#if this.citingPaper}}
+        <ScholarCiteModal
+          @paper={{this.citingPaper}}
+          @onClose={{this.closeCite}}
+        />
       {{/if}}
     </div>
   </template>
