@@ -22,7 +22,6 @@ module DiscourseScholar
           request.headers["Content-Type"] = "application/json"
           request.headers["Accept"] = "application/json"
           request.headers["Authorization"] = "Bearer #{api_key}"
-          request.headers["X-RapidAPI-Proxy-Secret"] = proxy_secret
           request.body = body.to_json
         end
 
@@ -66,18 +65,6 @@ module DiscourseScholar
             timeout: READ_TIMEOUT_SECONDS,
           },
         )
-    end
-
-    def proxy_secret
-      secret =
-        ENV["DISCOURSE_SCHOLAR_API_PROXY_SECRET"].presence ||
-          SiteSetting.discourse_scholar_api_proxy_secret
-
-      if secret.blank?
-        raise MissingConfiguration, I18n.t("discourse_scholar.errors.missing_proxy_secret")
-      end
-
-      secret
     end
 
     def api_key

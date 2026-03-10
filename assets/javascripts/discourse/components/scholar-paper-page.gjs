@@ -33,10 +33,10 @@ export default class PaperDetailPage extends Component {
   <template>
     <div class="scholar-page paper-detail-page">
       {{#if this.paper.load_error}}
-        <section class="paper-detail-page__layout">
-          <article class="paper-detail-page__card">
+        <section class="scholar-page__error">
+          <article class="scholar-page__card">
             <h2>{{i18n "scholar.paper.states.unavailable"}}</h2>
-            <p class="paper-detail-page__empty">
+            <p class="scholar-page__empty">
               {{this.errorMessage}}
             </p>
           </article>

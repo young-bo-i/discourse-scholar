@@ -7,6 +7,3 @@ discourse_scholar:
   discourse_scholar_api_key:
     default: ""
     secret: true
-  discourse_scholar_api_proxy_secret:
-    default: ""
-    secret: true

@@ -10,11 +10,14 @@ body.scholar-active {
   }
 
   #main-outlet {
-    padding-top: 0;
-    padding-left: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   #main-outlet-wrapper {
+    display: block !important;
     grid-template-columns: 1fr;
   }
 }
@@ -369,6 +372,11 @@ body.scholar-active {
   color: var(--primary-high);
   line-height: 1.7;
   white-space: pre-line;
+}
+
+.scholar-page__error {
+  max-width: 680px;
+  margin: 2rem auto;
 }
 
 .scholar-page__empty,

@@ -29,7 +29,7 @@ export default class ScholarAuthorPage extends Component {
   <template>
     <div class="scholar-page scholar-author-page">
       {{#if this.author.load_error}}
-        <section class="scholar-page__layout">
+        <section class="scholar-page__error">
           <article class="scholar-page__card">
             <h2>{{i18n "scholar.author.states.unavailable"}}</h2>
             <p class="scholar-page__empty">{{this.errorMessage}}</p>
