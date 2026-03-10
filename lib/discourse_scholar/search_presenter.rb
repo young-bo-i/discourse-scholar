@@ -88,12 +88,16 @@ module DiscourseScholar
         title = value(item, :title)
         next if title.blank?
 
+        paper_id = value(item, :paperId, :id)
+        next if paper_id.blank?
+
+        rid = route_id(paper_id)
         {
-          id: value(item, :id),
-          route_id: route_id(value(item, :id)),
+          id: paper_id,
+          route_id: rid,
           type: "paper",
           label: title,
-          path: "/scholar/paper/#{route_id(value(item, :id))}",
+          path: "/scholar/paper/#{rid}",
         }
       end
     end
@@ -103,13 +107,17 @@ module DiscourseScholar
         name = value(item, :name)
         next if name.blank?
 
+        author_id = value(item, :authorId, :id)
+        next if author_id.blank?
+
+        rid = route_id(author_id)
         {
-          id: value(item, :id),
-          route_id: route_id(value(item, :id)),
+          id: author_id,
+          route_id: rid,
           type: "author",
           label: name,
           subtext: Array(value(item, :affiliations)).first,
-          path: "/scholar/author/#{route_id(value(item, :id))}",
+          path: "/scholar/author/#{rid}",
         }.compact
       end
     end

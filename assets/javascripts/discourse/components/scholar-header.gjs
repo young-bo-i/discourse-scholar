@@ -29,6 +29,10 @@ export default class ScholarHeader extends Component {
     return url === "/scholar" || url === "/scholar/";
   }
 
+  get searchQuery() {
+    return this.router.currentRoute?.queryParams?.q || "";
+  }
+
   @action
   goToForum() {
     DiscourseURL.routeTo("/");
@@ -81,7 +85,7 @@ export default class ScholarHeader extends Component {
 
         {{#unless this.isHomePage}}
           <div class="scholar-header__search">
-            <ScholarSearchBox />
+            <ScholarSearchBox @initialQuery={{this.searchQuery}} />
           </div>
         {{/unless}}
 

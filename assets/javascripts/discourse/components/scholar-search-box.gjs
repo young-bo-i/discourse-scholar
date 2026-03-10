@@ -10,7 +10,8 @@ import { ajax } from "discourse/lib/ajax";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
 
-const MIN_QUERY_LENGTH = 2;
+const MIN_QUERY_LENGTH = 3;
+const MAX_QUERY_LENGTH = 500;
 const DEBOUNCE_MS = 200;
 
 export default class ScholarSearchBox extends Component {
@@ -46,12 +47,19 @@ get hasSuggestions() {
 
   @action
   handleInput(event) {
-    this.query = event.target.value;
+    let val = event.target.value;
+    if (val.length > MAX_QUERY_LENGTH) {
+      val = val.slice(0, MAX_QUERY_LENGTH);
+      event.target.value = val;
+    }
+    this.query = val;
+
     clearTimeout(this.debounceTimer);
     this.searchPromise?.abort();
     this.searchPromise = null;
 
-    if (this.currentQuery.trim().length < MIN_QUERY_LENGTH) {
+    const trimmed = this.currentQuery.trim();
+    if (trimmed.length < MIN_QUERY_LENGTH || trimmed.length > MAX_QUERY_LENGTH) {
       this.loading = false;
       this.suggestions = [];
       return;
@@ -65,7 +73,7 @@ get hasSuggestions() {
     event.preventDefault();
 
     const query = this.currentQuery.trim();
-    if (!query) {
+    if (query.length < MIN_QUERY_LENGTH || query.length > MAX_QUERY_LENGTH) {
       return;
     }
 
@@ -95,7 +103,7 @@ get hasSuggestions() {
 
   async fetchSuggestions() {
     const query = this.currentQuery.trim();
-    if (query.length < MIN_QUERY_LENGTH) {
+    if (query.length < MIN_QUERY_LENGTH || query.length > MAX_QUERY_LENGTH) {
       return;
     }
 
@@ -134,6 +142,8 @@ get hasSuggestions() {
           value={{this.currentQuery}}
           placeholder={{i18n "scholar.search.placeholder"}}
           autocomplete="off"
+          minlength="3"
+          maxlength="500"
           {{didInsert this.syncInitialQuery}}
           {{didUpdate this.syncInitialQuery @initialQuery}}
           {{on "input" this.handleInput}}
