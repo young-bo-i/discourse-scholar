@@ -45,23 +45,22 @@ body.scholar-active {
 }
 
 // ============================================================
-// Scholay icon in forum header
+// Scholar icon in forum header
 // ============================================================
 
 .scholar-forum-header-icon {
-  .scholay-brand-icon {
+  .scholar-logo-icon {
     font-size: var(--font-up-4);
     width: 1em;
     height: 1em;
     line-height: var(--line-height-large);
     display: inline-block;
-    opacity: 0.8;
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
   }
 
-  &:hover .scholay-brand-icon {
+  &:hover .scholar-logo-icon {
     opacity: 1;
-    transform: scale(1.08);
   }
 }
 
@@ -188,7 +187,28 @@ body.scholar-active {
 .scholar-header__right {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
   margin-left: auto;
+}
+
+.scholar-header__scholay-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+
+  .scholay-brand-icon {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  &:hover {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
 }
 
 .scholar-header__avatar {

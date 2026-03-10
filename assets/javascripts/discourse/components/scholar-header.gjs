@@ -9,6 +9,7 @@ import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
 import ScholarLogo from "./scholar-logo";
 import ScholarSearchBox from "./scholar-search-box";
+import ScholayBrandLogo from "./scholay-brand-logo";
 
 export default class ScholarHeader extends Component {
   @service currentUser;
@@ -85,6 +86,16 @@ export default class ScholarHeader extends Component {
         {{/unless}}
 
         <div class="scholar-header__right">
+          <a
+            href="https://www.scholay.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="scholar-header__scholay-link"
+            title={{i18n "scholar.header.scholay_link"}}
+          >
+            <ScholayBrandLogo />
+          </a>
+
           {{#if this.currentUser}}
             <button
               type="button"
