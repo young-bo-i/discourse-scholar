@@ -7,7 +7,6 @@ import icon from "discourse/helpers/d-icon";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
-import ScholarSearchBox from "./scholar-search-box";
 
 export default class ScholarSearchPage extends Component {
   @tracked yearFilter = null;
@@ -112,14 +111,50 @@ export default class ScholarSearchPage extends Component {
 
   <template>
     <div class="scholar-page scholar-search-page">
-      <ScholarSearchBox @initialQuery={{this.query}} />
-
       {{#if this.results.load_error}}
         <div class="scholar-search-page__error-card">
           <h2>{{i18n "scholar.search.unavailable"}}</h2>
           <p>{{this.errorMessage}}</p>
         </div>
       {{else}}
+        {{#if this.authors.length}}
+          <section class="scholar-search-page__authors-bar">
+            <div class="scholar-search-page__authors-scroll">
+              {{#each this.authors as |author|}}
+                <button
+                  type="button"
+                  class="scholar-search-page__author-card"
+                  {{on "click" (fn this.navigateTo author.path)}}
+                >
+                  <div class="scholar-search-page__author-avatar">
+                    {{icon "user"}}
+                  </div>
+                  <div class="scholar-search-page__author-info">
+                    <span
+                      class="scholar-search-page__author-name"
+                    >{{author.name}}</span>
+                    <span class="scholar-search-page__author-stats">
+                      {{#if author.paper_count}}
+                        {{number author.paper_count}}
+                        {{i18n "scholar.author.metrics.papers"}}
+                      {{/if}}
+                      {{#if author.citation_count}}
+                        · {{number author.citation_count}}
+                        {{i18n "scholar.author.metrics.citations"}}
+                      {{/if}}
+                    </span>
+                    {{#if author.affiliations.length}}
+                      <span
+                        class="scholar-search-page__author-field"
+                      >{{author.affiliations}}</span>
+                    {{/if}}
+                  </div>
+                </button>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
         <div class="scholar-search-page__container">
           <aside class="scholar-search-page__sidebar">
             <div class="scholar-search-page__filter-group">
@@ -271,42 +306,6 @@ export default class ScholarSearchPage extends Component {
               <p class="scholar-search-page__empty">{{i18n
                   "scholar.search.empty_papers"
                 }}</p>
-            {{/if}}
-
-            {{#if this.authors.length}}
-              <section class="scholar-search-page__authors-section">
-                <h2 class="scholar-search-page__section-title">{{i18n
-                    "scholar.search.sections.authors"
-                  }}</h2>
-                <div class="scholar-search-page__author-list">
-                  {{#each this.authors as |author|}}
-                    <article class="scholar-result-card">
-                      <button
-                        type="button"
-                        class="scholar-result-card__link"
-                        {{on "click" (fn this.navigateTo author.path)}}
-                      >
-                        <h3
-                          class="scholar-result-card__title"
-                        >{{author.name}}</h3>
-                      </button>
-                      <div class="scholar-result-card__meta">
-                        {{#if author.affiliations.length}}
-                          <span>{{author.affiliations}}</span>
-                        {{/if}}
-                        {{#if author.paper_count}}
-                          <span>{{number author.paper_count}}
-                            {{i18n "scholar.author.metrics.papers"}}</span>
-                        {{/if}}
-                        {{#if author.citation_count}}
-                          <span>{{number author.citation_count}}
-                            {{i18n "scholar.author.metrics.citations"}}</span>
-                        {{/if}}
-                      </div>
-                    </article>
-                  {{/each}}
-                </div>
-              </section>
             {{/if}}
           </main>
         </div>

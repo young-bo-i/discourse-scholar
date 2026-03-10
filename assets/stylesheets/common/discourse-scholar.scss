@@ -917,6 +917,82 @@ body.scholar-active {
   }
 }
 
+.scholar-search-page__authors-bar {
+  margin-bottom: 1.25rem;
+}
+
+.scholar-search-page__authors-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.25rem;
+}
+
+.scholar-search-page__author-card {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+  padding: 0.75rem 1rem;
+  background: var(--scholar-card-bg);
+  border: 1px solid var(--scholar-border);
+  border-radius: var(--scholar-card-radius);
+  box-shadow: var(--scholar-card-shadow);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 200px;
+  max-width: 280px;
+
+  &:hover {
+    border-color: var(--scholar-accent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--scholar-accent) 12%, transparent);
+  }
+}
+
+.scholar-search-page__author-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--scholar-accent) 12%, transparent);
+  color: var(--scholar-accent);
+  font-size: 0.9rem;
+}
+
+.scholar-search-page__author-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scholar-search-page__author-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--scholar-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scholar-search-page__author-stats {
+  font-size: 0.75rem;
+  color: var(--scholar-text-secondary);
+  white-space: nowrap;
+}
+
+.scholar-search-page__author-field {
+  font-size: 0.72rem;
+  color: var(--scholar-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .scholar-search-page__container {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
@@ -1008,23 +1084,6 @@ body.scholar-active {
   text-align: center;
 }
 
-.scholar-search-page__authors-section {
-  margin-top: 2rem;
-}
-
-.scholar-search-page__section-title {
-  margin: 0 0 0.75rem;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--scholar-text);
-}
-
-.scholar-search-page__author-list {
-  background: var(--scholar-card-bg);
-  border-radius: var(--scholar-card-radius);
-  box-shadow: var(--scholar-card-shadow);
-  padding: 0.5rem 1.5rem;
-}
 
 // ============================================================
 // Scholar Search Box
