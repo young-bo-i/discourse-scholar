@@ -2,7 +2,7 @@
 
 module DiscourseScholar
   class SearchClient < BaseClient
-    SEARCH_PAPER_LIMIT = 8
+    SEARCH_PAPER_LIMIT = 20
     SEARCH_AUTHOR_LIMIT = 5
     AUTOCOMPLETE_PAPER_LIMIT = 5
     SEARCH_CACHE_TTL = 5.minutes

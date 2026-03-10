@@ -25,12 +25,29 @@ en:
         unavailable: "Search is temporarily unavailable."
         empty_papers: "No papers found for this query."
         empty_authors: "No authors found for this query."
+        result_count:
+          one: "%{count} paper found"
+          other: "%{count} papers found"
         types:
           paper: "Paper"
           author: "Author"
         sections:
           papers: "Papers"
           authors: "Authors"
+        filters:
+          year_label: "Publication Year"
+          all_time: "All time"
+          since_2026: "Since 2026"
+          since_2025: "Since 2025"
+          since_2022: "Since 2022"
+          citations_label: "Citation Count"
+          citations_all: "All"
+          citations_10: "≥ 10"
+          citations_50: "≥ 50"
+          citations_100: "≥ 100"
+          citations_500: "≥ 500"
+          open_access_label: "Access Type"
+          open_access_only: "Open access only"
       paper:
         published_in: "Published in"
         meta:

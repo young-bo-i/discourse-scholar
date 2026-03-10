@@ -68,18 +68,28 @@ get hasSuggestions() {
       return;
     }
 
-    this.searchPromise?.abort();
-    this.searchPromise = null;
-    this.suggestions = [];
+    this.dismissSuggestions();
     DiscourseURL.routeTo(`/scholar/search?q=${encodeURIComponent(query)}`);
   }
 
   @action
   selectSuggestion(path) {
+    this.dismissSuggestions();
+    DiscourseURL.routeTo(path);
+  }
+
+  @action
+  handleBlur() {
+    setTimeout(() => {
+      this.suggestions = [];
+    }, 150);
+  }
+
+  dismissSuggestions() {
+    clearTimeout(this.debounceTimer);
     this.searchPromise?.abort();
     this.searchPromise = null;
     this.suggestions = [];
-    DiscourseURL.routeTo(path);
   }
 
   async fetchSuggestions() {
@@ -126,6 +136,7 @@ get hasSuggestions() {
           {{didInsert this.syncInitialQuery}}
           {{didUpdate this.syncInitialQuery @initialQuery}}
           {{on "input" this.handleInput}}
+          {{on "blur" this.handleBlur}}
         />
       </form>
 

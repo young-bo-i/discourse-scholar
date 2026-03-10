@@ -1,12 +1,19 @@
 import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
+import { action } from "@ember/object";
+import icon from "discourse/helpers/d-icon";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
 import ScholarSearchBox from "./scholar-search-box";
 
 export default class ScholarSearchPage extends Component {
+  @tracked yearFilter = null;
+  @tracked minCitations = 0;
+  @tracked openAccessOnly = false;
+
   get results() {
     return this.args.results || {};
   }
@@ -27,6 +34,78 @@ export default class ScholarSearchPage extends Component {
     return this.results.error_message || i18n("scholar.search.unavailable");
   }
 
+  get filteredPapers() {
+    let papers = this.papers;
+
+    if (this.yearFilter) {
+      papers = papers.filter((p) => p.year && p.year >= this.yearFilter);
+    }
+
+    if (this.minCitations > 0) {
+      papers = papers.filter(
+        (p) => p.citation_count && p.citation_count >= this.minCitations
+      );
+    }
+
+    if (this.openAccessOnly) {
+      papers = papers.filter((p) => p.is_open_access);
+    }
+
+    return papers;
+  }
+
+  get isYearAll() {
+    return this.yearFilter === null;
+  }
+
+  get isYear2026() {
+    return this.yearFilter === 2026;
+  }
+
+  get isYear2025() {
+    return this.yearFilter === 2025;
+  }
+
+  get isYear2022() {
+    return this.yearFilter === 2022;
+  }
+
+  get isCitAll() {
+    return this.minCitations === 0;
+  }
+
+  get isCit10() {
+    return this.minCitations === 10;
+  }
+
+  get isCit50() {
+    return this.minCitations === 50;
+  }
+
+  get isCit100() {
+    return this.minCitations === 100;
+  }
+
+  get isCit500() {
+    return this.minCitations === 500;
+  }
+
+  @action
+  setYearFilter(value) {
+    this.yearFilter = value;
+  }
+
+  @action
+  setCitationFilter(value) {
+    this.minCitations = value;
+  }
+
+  @action
+  toggleOpenAccess() {
+    this.openAccessOnly = !this.openAccessOnly;
+  }
+
+  @action
   navigateTo(path) {
     DiscourseURL.routeTo(path);
   }
@@ -41,14 +120,103 @@ export default class ScholarSearchPage extends Component {
           <p>{{this.errorMessage}}</p>
         </div>
       {{else}}
-        <div class="scholar-search-page__results">
-          <section class="scholar-search-page__section">
-            <h2 class="scholar-search-page__section-title">{{i18n
-                "scholar.search.sections.papers"
-              }}</h2>
-            {{#if this.papers.length}}
-              <div class="scholar-search-page__list">
-                {{#each this.papers as |paper|}}
+        <div class="scholar-search-page__container">
+          <aside class="scholar-search-page__sidebar">
+            <div class="scholar-search-page__filter-group">
+              <h3 class="scholar-search-page__filter-title">{{i18n
+                  "scholar.search.filters.year_label"
+                }}</h3>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isYearAll '-active'}}"
+                {{on "click" (fn this.setYearFilter null)}}
+              >{{i18n "scholar.search.filters.all_time"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isYear2026 '-active'}}"
+                {{on "click" (fn this.setYearFilter 2026)}}
+              >{{i18n "scholar.search.filters.since_2026"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isYear2025 '-active'}}"
+                {{on "click" (fn this.setYearFilter 2025)}}
+              >{{i18n "scholar.search.filters.since_2025"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isYear2022 '-active'}}"
+                {{on "click" (fn this.setYearFilter 2022)}}
+              >{{i18n "scholar.search.filters.since_2022"}}</button>
+            </div>
+
+            <div class="scholar-search-page__filter-group">
+              <h3 class="scholar-search-page__filter-title">{{i18n
+                  "scholar.search.filters.citations_label"
+                }}</h3>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isCitAll '-active'}}"
+                {{on "click" (fn this.setCitationFilter 0)}}
+              >{{i18n "scholar.search.filters.citations_all"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isCit10 '-active'}}"
+                {{on "click" (fn this.setCitationFilter 10)}}
+              >{{i18n "scholar.search.filters.citations_10"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isCit50 '-active'}}"
+                {{on "click" (fn this.setCitationFilter 50)}}
+              >{{i18n "scholar.search.filters.citations_50"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isCit100 '-active'}}"
+                {{on "click" (fn this.setCitationFilter 100)}}
+              >{{i18n "scholar.search.filters.citations_100"}}</button>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.isCit500 '-active'}}"
+                {{on "click" (fn this.setCitationFilter 500)}}
+              >{{i18n "scholar.search.filters.citations_500"}}</button>
+            </div>
+
+            <div class="scholar-search-page__filter-group">
+              <h3 class="scholar-search-page__filter-title">{{i18n
+                  "scholar.search.filters.open_access_label"
+                }}</h3>
+              <button
+                type="button"
+                class="scholar-search-page__filter-item
+                  {{if this.openAccessOnly '-active'}}"
+                {{on "click" this.toggleOpenAccess}}
+              >
+                {{icon "lock-open"}}
+                {{i18n "scholar.search.filters.open_access_only"}}
+              </button>
+            </div>
+          </aside>
+
+          <main class="scholar-search-page__main">
+            <div class="scholar-search-page__result-header">
+              <span class="scholar-search-page__result-count">
+                {{i18n
+                  "scholar.search.result_count"
+                  count=this.filteredPapers.length
+                }}
+              </span>
+            </div>
+
+            {{#if this.filteredPapers.length}}
+              <div class="scholar-search-page__paper-list">
+                {{#each this.filteredPapers as |paper|}}
                   <article class="scholar-result-card">
                     <button
                       type="button"
@@ -76,6 +244,20 @@ export default class ScholarSearchPage extends Component {
                         >{{paper.year}}</span>
                       {{/if}}
                     </div>
+                    {{#if paper.fields_of_study.length}}
+                      <div class="scholar-result-card__fields">
+                        {{#each paper.fields_of_study as |field|}}
+                          <span
+                            class="scholar-result-card__field"
+                          >{{field}}</span>
+                        {{/each}}
+                      </div>
+                    {{/if}}
+                    {{#if paper.abstract}}
+                      <p
+                        class="scholar-result-card__abstract"
+                      >{{paper.abstract}}</p>
+                    {{/if}}
                     {{#if paper.citation_count}}
                       <span class="scholar-result-card__citations">
                         {{number paper.citation_count}}
@@ -90,47 +272,43 @@ export default class ScholarSearchPage extends Component {
                   "scholar.search.empty_papers"
                 }}</p>
             {{/if}}
-          </section>
 
-          <section class="scholar-search-page__section">
-            <h2 class="scholar-search-page__section-title">{{i18n
-                "scholar.search.sections.authors"
-              }}</h2>
             {{#if this.authors.length}}
-              <div class="scholar-search-page__list">
-                {{#each this.authors as |author|}}
-                  <article class="scholar-result-card">
-                    <button
-                      type="button"
-                      class="scholar-result-card__link"
-                      {{on "click" (fn this.navigateTo author.path)}}
-                    >
-                      <h3
-                        class="scholar-result-card__title"
-                      >{{author.name}}</h3>
-                    </button>
-                    <div class="scholar-result-card__meta">
-                      {{#if author.affiliations.length}}
-                        <span>{{author.affiliations}}</span>
-                      {{/if}}
-                      {{#if author.paper_count}}
-                        <span>{{number author.paper_count}}
-                          {{i18n "scholar.author.metrics.papers"}}</span>
-                      {{/if}}
-                      {{#if author.citation_count}}
-                        <span>{{number author.citation_count}}
-                          {{i18n "scholar.author.metrics.citations"}}</span>
-                      {{/if}}
-                    </div>
-                  </article>
-                {{/each}}
-              </div>
-            {{else}}
-              <p class="scholar-search-page__empty">{{i18n
-                  "scholar.search.empty_authors"
-                }}</p>
+              <section class="scholar-search-page__authors-section">
+                <h2 class="scholar-search-page__section-title">{{i18n
+                    "scholar.search.sections.authors"
+                  }}</h2>
+                <div class="scholar-search-page__author-list">
+                  {{#each this.authors as |author|}}
+                    <article class="scholar-result-card">
+                      <button
+                        type="button"
+                        class="scholar-result-card__link"
+                        {{on "click" (fn this.navigateTo author.path)}}
+                      >
+                        <h3
+                          class="scholar-result-card__title"
+                        >{{author.name}}</h3>
+                      </button>
+                      <div class="scholar-result-card__meta">
+                        {{#if author.affiliations.length}}
+                          <span>{{author.affiliations}}</span>
+                        {{/if}}
+                        {{#if author.paper_count}}
+                          <span>{{number author.paper_count}}
+                            {{i18n "scholar.author.metrics.papers"}}</span>
+                        {{/if}}
+                        {{#if author.citation_count}}
+                          <span>{{number author.citation_count}}
+                            {{i18n "scholar.author.metrics.citations"}}</span>
+                        {{/if}}
+                      </div>
+                    </article>
+                  {{/each}}
+                </div>
+              </section>
             {{/if}}
-          </section>
+          </main>
         </div>
       {{/if}}
     </div>

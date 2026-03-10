@@ -12,7 +12,6 @@ enabled_site_setting :discourse_scholar_enabled
 register_asset "stylesheets/common/discourse-scholar.scss"
 register_asset "stylesheets/mobile/discourse-scholar.scss", :mobile
 
-register_svg_icon "graduation-cap"
 register_svg_icon "comments"
 register_svg_icon "magnifying-glass"
 register_svg_icon "users"
@@ -42,7 +41,7 @@ module ::DiscourseScholar
     ].freeze
 
   AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex orcid url].freeze
-  SEARCH_PAPER_FIELDS = %w[title authors year citationCount venue].freeze
+  SEARCH_PAPER_FIELDS = %w[title authors year publicationDate citationCount venue abstract fieldsOfStudy isOpenAccess].freeze
   SEARCH_AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex].freeze
   AUTOCOMPLETE_AUTHOR_FIELDS = %w[name affiliations].freeze
   RELATED_PAPER_FIELDS = %w[title authors year citationCount venue].freeze

@@ -42,8 +42,12 @@ module DiscourseScholar
           type: "paper",
           title: value(paper, :title),
           year: value(paper, :year),
+          publication_date: value(paper, :publicationDate, :publication_date),
           venue: value(paper, :venue),
+          abstract: value(paper, :abstract),
           citation_count: count_value(paper, :citation_count, :citationCount),
+          is_open_access: value(paper, :isOpenAccess, :is_open_access),
+          fields_of_study: Array(value(paper, :fieldsOfStudy, :fields_of_study)),
           authors: normalize_authors_for_paper(paper),
           path: "/scholar/paper/#{route_id(value(paper, :id))}",
         }.compact

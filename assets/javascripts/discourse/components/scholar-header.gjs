@@ -7,6 +7,7 @@ import icon from "discourse/helpers/d-icon";
 import getURL from "discourse/lib/get-url";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
+import ScholarLogo from "./scholar-logo";
 import ScholarSearchBox from "./scholar-search-box";
 
 export default class ScholarHeader extends Component {
@@ -72,7 +73,7 @@ export default class ScholarHeader extends Component {
             class="scholar-header__brand"
             {{on "click" this.goToHome}}
           >
-            {{icon "graduation-cap"}}
+            <ScholarLogo />
             <span class="scholar-header__brand-text">Scholar</span>
           </button>
         </div>
