@@ -4,7 +4,6 @@ import { on } from "@ember/modifier";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
-import ScholarSearchBox from "./scholar-search-box";
 
 export default class PaperDetailPage extends Component {
   get paper() {
@@ -33,8 +32,6 @@ export default class PaperDetailPage extends Component {
 
   <template>
     <div class="scholar-page paper-detail-page">
-      <ScholarSearchBox />
-
       {{#if this.paper.load_error}}
         <section class="paper-detail-page__layout">
           <article class="paper-detail-page__card">

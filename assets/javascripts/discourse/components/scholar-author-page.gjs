@@ -3,7 +3,6 @@ import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
-import ScholarSearchBox from "./scholar-search-box";
 import { i18n } from "discourse-i18n";
 
 export default class ScholarAuthorPage extends Component {
@@ -29,8 +28,6 @@ export default class ScholarAuthorPage extends Component {
 
   <template>
     <div class="scholar-page scholar-author-page">
-      <ScholarSearchBox />
-
       {{#if this.author.load_error}}
         <section class="scholar-page__layout">
           <article class="scholar-page__card">

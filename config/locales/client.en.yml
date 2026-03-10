@@ -6,6 +6,19 @@ en:
           discourse_scholar: "Scholar"
   js:
     scholar:
+      header:
+        title: "Scholar"
+        home: "Home"
+        search: "Search"
+        back_to_forum: "Back to forum"
+        login: "Log in"
+      home:
+        title: "Scholar"
+        subtitle: "Explore papers and authors from open academic databases"
+        search_papers: "Search Papers"
+        search_papers_desc: "Find academic papers by keyword, title, or topic"
+        search_authors: "Search Authors"
+        search_authors_desc: "Discover researchers and their publications"
       search:
         placeholder: "Search papers or authors"
         loading: "Loading suggestions..."

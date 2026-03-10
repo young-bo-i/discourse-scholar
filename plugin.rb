@@ -12,6 +12,11 @@ enabled_site_setting :discourse_scholar_enabled
 register_asset "stylesheets/common/discourse-scholar.scss"
 register_asset "stylesheets/mobile/discourse-scholar.scss", :mobile
 
+register_svg_icon "graduation-cap"
+register_svg_icon "comments"
+register_svg_icon "magnifying-glass"
+register_svg_icon "users"
+
 module ::DiscourseScholar
   PLUGIN_NAME = "discourse-scholar"
   PAPER_FIELDS =

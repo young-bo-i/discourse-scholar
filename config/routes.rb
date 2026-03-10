@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 DiscourseScholar::Engine.routes.draw do
+  get "/scholar" => "home#show"
   get "/scholar/paper/:id" => "papers#show"
   get "/scholar/author/:id" => "authors#show"
   get "/scholar/search" => "search#show"

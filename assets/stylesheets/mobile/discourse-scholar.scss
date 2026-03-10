@@ -1,13 +1,13 @@
 .scholar-page,
 .paper-detail-page {
-  padding: 1.25rem 0.75rem 3rem;
+  padding: 1rem 0.75rem 2rem;
 }
 
 .scholar-page__hero-content,
 .scholar-page__card,
 .paper-detail-page__hero-content,
 .paper-detail-page__card {
-  padding: 1rem;
+  padding: 0.875rem;
 }
 
 .scholar-page__layout,
@@ -17,5 +17,22 @@
 
 .scholar-page__title,
 .paper-detail-page__title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+}
+
+.scholar-home-page {
+  padding-top: 1.5rem;
+}
+
+.scholar-home-page__cards {
+  grid-template-columns: 1fr;
+}
+
+.scholar-header__nav-link {
+  padding: 0.3rem 0.4rem;
+  font-size: var(--font-down-1);
+}
+
+.scholar-header__brand-text {
+  display: none;
 }
