@@ -1,10 +1,10 @@
 import Component from "@glimmer/component";
-import { fn } from "@ember/helper";
+import { tracked } from "@glimmer/tracking";
+import { concat, fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import didUpdate from "@ember/render-modifiers/modifiers/did-update";
-import { tracked } from "@glimmer/tracking";
 import { ajax } from "discourse/lib/ajax";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
@@ -21,14 +21,6 @@ export default class ScholarSearchBox extends Component {
   debounceTimer = null;
   searchPromise = null;
 
-  get hasSuggestions() {
-    return this.suggestions.length > 0;
-  }
-
-  get currentQuery() {
-    return this.query ?? this.args.initialQuery ?? "";
-  }
-
   willDestroy() {
     super.willDestroy(...arguments);
     clearTimeout(this.debounceTimer);
@@ -36,13 +28,19 @@ export default class ScholarSearchBox extends Component {
     this.searchPromise = null;
   }
 
+get hasSuggestions() {
+    return this.suggestions.length > 0;
+  }
+
+  get currentQuery() {
+    return this.query ?? this.args.initialQuery ?? "";
+  }
+
+  
+
   @action
   syncInitialQuery() {
     this.query = this.args.initialQuery ?? "";
-  }
-
-  suggestionTypeLabel(type) {
-    return i18n(`scholar.search.types.${type}`);
   }
 
   @action
@@ -139,22 +137,31 @@ export default class ScholarSearchBox extends Component {
               class="scholar-search-box__suggestion"
               {{on "click" (fn this.selectSuggestion item.path)}}
             >
-              <span class="scholar-search-box__suggestion-label">
-                {{item.label}}
-              </span>
-              <span class="scholar-search-box__suggestion-meta">
-                {{this.suggestionTypeLabel item.type}}
+              <span class="scholar-search-box__suggestion-content">
+                <span class="scholar-search-box__suggestion-label">
+                  {{item.label}}
+                </span>
                 {{#if item.subtext}}
-                  ·
-                  {{item.subtext}}
+                  <span class="scholar-search-box__suggestion-meta">
+                    {{item.subtext}}
+                  </span>
                 {{/if}}
+              </span>
+              <span
+                class="scholar-search-box__suggestion-badge -{{item.type}}"
+              >
+                {{i18n (concat "scholar.search.types." item.type)}}
               </span>
             </button>
           {{/each}}
         </div>
       {{else if this.loading}}
-        <div class="scholar-search-box__suggestions -loading">
-          {{i18n "scholar.search.loading"}}
+        <div class="scholar-search-box__suggestions">
+          <div class="scholar-search-box__shimmer">
+            <div class="scholar-search-box__shimmer-line"></div>
+            <div class="scholar-search-box__shimmer-line"></div>
+            <div class="scholar-search-box__shimmer-line"></div>
+          </div>
         </div>
       {{/if}}
     </section>

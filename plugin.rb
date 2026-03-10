@@ -16,31 +16,34 @@ register_svg_icon "graduation-cap"
 register_svg_icon "comments"
 register_svg_icon "magnifying-glass"
 register_svg_icon "users"
+register_svg_icon "file-pdf"
+register_svg_icon "arrow-up-right-from-square"
+register_svg_icon "lock-open"
 
 module ::DiscourseScholar
   PLUGIN_NAME = "discourse-scholar"
   PAPER_FIELDS =
     %w[
-      id
       title
       abstract
       authors
       year
-      publication_date
+      publicationDate
       doi
-      citation_count
-      reference_count
+      citationCount
+      referenceCount
       venue
-      is_open_access
-      pdf_url
+      isOpenAccess
+      openAccessPdf
       url
-      fields_of_study
+      fieldsOfStudy
+      externalIds
     ].freeze
 
-  AUTHOR_FIELDS = %w[id name affiliations paperCount citationCount hIndex orcid url].freeze
-  SEARCH_PAPER_FIELDS = %w[id title authors year citationCount venue].freeze
-  SEARCH_AUTHOR_FIELDS = %w[id name affiliations paperCount citationCount hIndex].freeze
-  AUTOCOMPLETE_AUTHOR_FIELDS = %w[id name affiliations].freeze
+  AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex orcid url].freeze
+  SEARCH_PAPER_FIELDS = %w[title authors year citationCount venue].freeze
+  SEARCH_AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex].freeze
+  AUTOCOMPLETE_AUTHOR_FIELDS = %w[name affiliations].freeze
 end
 
 require_relative "lib/discourse_scholar/engine"

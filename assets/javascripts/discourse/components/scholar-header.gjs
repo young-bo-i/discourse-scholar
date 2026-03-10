@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
-import { service } from "@ember/service";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import avatar from "discourse/helpers/avatar";
 import icon from "discourse/helpers/d-icon";
 import DiscourseURL from "discourse/lib/url";
@@ -11,8 +11,13 @@ export default class ScholarHeader extends Component {
   @service currentUser;
   @service router;
 
-  get isActive() {
-    return (path) => this.router.currentURL?.startsWith(path);
+  get isHomeActive() {
+    const url = this.router.currentURL;
+    return url === "/scholar" || url === "/scholar/";
+  }
+
+  get isSearchActive() {
+    return this.router.currentURL?.startsWith("/scholar/search");
   }
 
   @action
@@ -65,14 +70,14 @@ export default class ScholarHeader extends Component {
         <nav class="scholar-header__nav">
           <button
             type="button"
-            class="scholar-header__nav-link"
+            class="scholar-header__nav-link {{if this.isHomeActive '-active'}}"
             {{on "click" this.goToHome}}
           >
             {{i18n "scholar.header.home"}}
           </button>
           <button
             type="button"
-            class="scholar-header__nav-link"
+            class="scholar-header__nav-link {{if this.isSearchActive '-active'}}"
             {{on "click" this.goToSearch}}
           >
             {{i18n "scholar.header.search"}}

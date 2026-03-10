@@ -20,7 +20,7 @@ en:
         search_authors: "Search Authors"
         search_authors_desc: "Discover researchers and their publications"
       search:
-        placeholder: "Search papers or authors"
+        placeholder: "Search papers or authors..."
         loading: "Loading suggestions..."
         unavailable: "Search is temporarily unavailable."
         empty_papers: "No papers found for this query."
@@ -40,18 +40,22 @@ en:
           paper_id: "Paper ID"
         sections:
           abstract: "Abstract"
-          fields_of_study: "Fields of study"
+          fields_of_study: "Fields of Study"
           metrics: "Metrics"
           links: "Links"
+          details: "Details"
         metrics:
           citations: "Citations"
           references: "References"
-          open_access: "Open access"
+          open_access: "Open Access"
         states:
           no_abstract: "No abstract is available for this paper."
           no_authors: "Author information is unavailable."
           no_fields: "No fields of study are available."
           unavailable: "Paper details are temporarily unavailable."
+        actions:
+          view_source: "View Publisher"
+          open_pdf: "Download PDF"
         links:
           source: "Source page"
           pdf: "Open-access PDF"

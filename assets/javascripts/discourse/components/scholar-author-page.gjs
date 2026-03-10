@@ -19,7 +19,9 @@ export default class ScholarAuthorPage extends Component {
   }
 
   get errorMessage() {
-    return this.author.error_message || i18n("scholar.author.states.unavailable");
+    return (
+      this.author.error_message || i18n("scholar.author.states.unavailable")
+    );
   }
 
   navigateTo(path) {
@@ -39,7 +41,6 @@ export default class ScholarAuthorPage extends Component {
         <section class="scholar-page__hero">
           <div class="scholar-page__hero-content">
             <h1 class="scholar-page__title">{{this.author.name}}</h1>
-
             {{#if this.affiliations.length}}
               <div class="scholar-page__tags">
                 {{#each this.affiliations as |affiliation|}}
@@ -50,23 +51,35 @@ export default class ScholarAuthorPage extends Component {
           </div>
         </section>
 
+        <div class="scholar-page__stats-row">
+          <div class="scholar-page__stat-card">
+            <span class="scholar-page__stat-value">{{number
+                this.author.paper_count
+              }}</span>
+            <span class="scholar-page__stat-label">{{i18n
+                "scholar.author.metrics.papers"
+              }}</span>
+          </div>
+          <div class="scholar-page__stat-card">
+            <span class="scholar-page__stat-value">{{number
+                this.author.citation_count
+              }}</span>
+            <span class="scholar-page__stat-label">{{i18n
+                "scholar.author.metrics.citations"
+              }}</span>
+          </div>
+          <div class="scholar-page__stat-card">
+            <span class="scholar-page__stat-value">{{number
+                this.author.h_index
+              }}</span>
+            <span class="scholar-page__stat-label">{{i18n
+                "scholar.author.metrics.h_index"
+              }}</span>
+          </div>
+        </div>
+
         <section class="scholar-page__layout">
           <main class="scholar-page__main">
-            <article class="scholar-page__card">
-              <h2>{{i18n "scholar.author.sections.affiliations"}}</h2>
-              {{#if this.affiliations.length}}
-                <ul class="scholar-page__list">
-                  {{#each this.affiliations as |affiliation|}}
-                    <li>{{affiliation}}</li>
-                  {{/each}}
-                </ul>
-              {{else}}
-                <p class="scholar-page__empty">
-                  {{i18n "scholar.author.states.no_affiliations"}}
-                </p>
-              {{/if}}
-            </article>
-
             <article class="scholar-page__card">
               <h2>{{i18n "scholar.author.sections.papers"}}</h2>
               {{#if this.papers.length}}
@@ -79,15 +92,17 @@ export default class ScholarAuthorPage extends Component {
                     >
                       <span class="scholar-page__result-title">{{paper.title}}</span>
                       <span class="scholar-page__result-meta">
-                        {{paper.year}}
+                        {{#if paper.year}}
+                          <span class="scholar-page__result-meta-pill">{{paper.year}}</span>
+                        {{/if}}
                         {{#if paper.venue}}
-                          ·
-                          {{paper.venue}}
+                          <span class="scholar-page__result-meta-pill">{{paper.venue}}</span>
                         {{/if}}
                         {{#if paper.citation_count}}
-                          ·
-                          {{number paper.citation_count}}
-                          {{i18n "scholar.author.metrics.citations"}}
+                          <span class="scholar-page__result-meta-pill">
+                            {{number paper.citation_count}}
+                            {{i18n "scholar.author.metrics.citations"}}
+                          </span>
                         {{/if}}
                       </span>
                     </button>
@@ -101,25 +116,18 @@ export default class ScholarAuthorPage extends Component {
             </article>
           </main>
 
-          <aside class="scholar-page__sidebar">
-            <article class="scholar-page__card">
-              <h2>{{i18n "scholar.author.sections.metrics"}}</h2>
-              <dl class="scholar-page__stats">
-                <div>
-                  <dt>{{i18n "scholar.author.metrics.papers"}}</dt>
-                  <dd>{{number this.author.paper_count}}</dd>
-                </div>
-                <div>
-                  <dt>{{i18n "scholar.author.metrics.citations"}}</dt>
-                  <dd>{{number this.author.citation_count}}</dd>
-                </div>
-                <div>
-                  <dt>{{i18n "scholar.author.metrics.h_index"}}</dt>
-                  <dd>{{number this.author.h_index}}</dd>
-                </div>
-              </dl>
-            </article>
-          </aside>
+          {{#if this.affiliations.length}}
+            <aside class="scholar-page__sidebar">
+              <article class="scholar-page__card">
+                <h2>{{i18n "scholar.author.sections.affiliations"}}</h2>
+                <ul class="scholar-page__list">
+                  {{#each this.affiliations as |affiliation|}}
+                    <li>{{affiliation}}</li>
+                  {{/each}}
+                </ul>
+              </article>
+            </aside>
+          {{/if}}
         </section>
       {{/if}}
     </div>

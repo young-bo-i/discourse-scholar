@@ -17,7 +17,9 @@ export default class ScholarHomePage extends Component {
       <section class="scholar-home-page__hero">
         <h1 class="scholar-home-page__title">
           {{icon "graduation-cap"}}
-          {{i18n "scholar.home.title"}}
+          <span class="scholar-home-page__title-text">
+            {{i18n "scholar.home.title"}}
+          </span>
         </h1>
         <p class="scholar-home-page__subtitle">
           {{i18n "scholar.home.subtitle"}}
@@ -33,9 +35,15 @@ export default class ScholarHomePage extends Component {
           class="scholar-home-page__card"
           {{on "click" this.goToSearch}}
         >
-          <span class="scholar-home-page__card-icon">{{icon "magnifying-glass"}}</span>
-          <span class="scholar-home-page__card-title">{{i18n "scholar.home.search_papers"}}</span>
-          <span class="scholar-home-page__card-desc">{{i18n "scholar.home.search_papers_desc"}}</span>
+          <span class="scholar-home-page__card-icon">{{icon
+              "magnifying-glass"
+            }}</span>
+          <span class="scholar-home-page__card-title">{{i18n
+              "scholar.home.search_papers"
+            }}</span>
+          <span class="scholar-home-page__card-desc">{{i18n
+              "scholar.home.search_papers_desc"
+            }}</span>
         </button>
 
         <button
@@ -44,8 +52,12 @@ export default class ScholarHomePage extends Component {
           {{on "click" this.goToSearch}}
         >
           <span class="scholar-home-page__card-icon">{{icon "users"}}</span>
-          <span class="scholar-home-page__card-title">{{i18n "scholar.home.search_authors"}}</span>
-          <span class="scholar-home-page__card-desc">{{i18n "scholar.home.search_authors_desc"}}</span>
+          <span class="scholar-home-page__card-title">{{i18n
+              "scholar.home.search_authors"
+            }}</span>
+          <span class="scholar-home-page__card-desc">{{i18n
+              "scholar.home.search_authors_desc"
+            }}</span>
         </button>
       </section>
     </div>
