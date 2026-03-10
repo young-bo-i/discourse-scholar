@@ -8,6 +8,7 @@ en:
     scholar:
       header:
         title: "Scholar"
+        scholay_link: "Scholay - Academic Search Platform"
         home: "Home"
         search: "Search"
         back_to_forum: "Back to forum"
