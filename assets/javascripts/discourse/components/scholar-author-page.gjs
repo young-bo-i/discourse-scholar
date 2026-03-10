@@ -1,6 +1,7 @@
 import Component from "@glimmer/component";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
+import icon from "discourse/helpers/d-icon";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
@@ -31,104 +32,84 @@ export default class ScholarAuthorPage extends Component {
   <template>
     <div class="scholar-page scholar-author-page">
       {{#if this.author.load_error}}
-        <section class="scholar-page__error">
-          <article class="scholar-page__card">
-            <h2>{{i18n "scholar.author.states.unavailable"}}</h2>
-            <p class="scholar-page__empty">{{this.errorMessage}}</p>
-          </article>
-        </section>
-      {{else}}
-        <section class="scholar-page__hero">
-          <div class="scholar-page__hero-content">
-            <h1 class="scholar-page__title">{{this.author.name}}</h1>
-            {{#if this.affiliations.length}}
-              <div class="scholar-page__tags">
-                {{#each this.affiliations as |affiliation|}}
-                  <span class="scholar-page__tag">{{affiliation}}</span>
-                {{/each}}
-              </div>
-            {{/if}}
-          </div>
-        </section>
-
-        <div class="scholar-page__stats-row">
-          <div class="scholar-page__stat-card">
-            <span class="scholar-page__stat-value">{{number
-                this.author.paper_count
-              }}</span>
-            <span class="scholar-page__stat-label">{{i18n
-                "scholar.author.metrics.papers"
-              }}</span>
-          </div>
-          <div class="scholar-page__stat-card">
-            <span class="scholar-page__stat-value">{{number
-                this.author.citation_count
-              }}</span>
-            <span class="scholar-page__stat-label">{{i18n
-                "scholar.author.metrics.citations"
-              }}</span>
-          </div>
-          <div class="scholar-page__stat-card">
-            <span class="scholar-page__stat-value">{{number
-                this.author.h_index
-              }}</span>
-            <span class="scholar-page__stat-label">{{i18n
-                "scholar.author.metrics.h_index"
-              }}</span>
-          </div>
+        <div class="scholar-author-page__error-card">
+          <h2>{{i18n "scholar.author.states.unavailable"}}</h2>
+          <p>{{this.errorMessage}}</p>
         </div>
+      {{else}}
+        <div class="scholar-author-page__container">
+          <aside class="scholar-author-page__sidebar">
+            <div class="scholar-author-page__profile-card">
+              <div class="scholar-author-page__avatar">
+                {{icon "user"}}
+              </div>
+              <h1 class="scholar-author-page__name">{{this.author.name}}</h1>
 
-        <section class="scholar-page__layout">
-          <main class="scholar-page__main">
-            <article class="scholar-page__card">
-              <h2>{{i18n "scholar.author.sections.papers"}}</h2>
-              {{#if this.papers.length}}
-                <div class="scholar-page__result-list">
-                  {{#each this.papers as |paper|}}
-                    <button
-                      type="button"
-                      class="scholar-page__result"
-                      {{on "click" (fn this.navigateTo paper.path)}}
-                    >
-                      <span class="scholar-page__result-title">{{paper.title}}</span>
-                      <span class="scholar-page__result-meta">
-                        {{#if paper.year}}
-                          <span class="scholar-page__result-meta-pill">{{paper.year}}</span>
-                        {{/if}}
-                        {{#if paper.venue}}
-                          <span class="scholar-page__result-meta-pill">{{paper.venue}}</span>
-                        {{/if}}
-                        {{#if paper.citation_count}}
-                          <span class="scholar-page__result-meta-pill">
-                            {{number paper.citation_count}}
-                            {{i18n "scholar.author.metrics.citations"}}
-                          </span>
-                        {{/if}}
-                      </span>
-                    </button>
+              {{#if this.affiliations.length}}
+                <div class="scholar-author-page__affiliations">
+                  {{#each this.affiliations as |affiliation|}}
+                    <span>{{affiliation}}</span>
                   {{/each}}
                 </div>
-              {{else}}
-                <p class="scholar-page__empty">
-                  {{i18n "scholar.author.states.no_papers"}}
-                </p>
               {{/if}}
-            </article>
-          </main>
 
-          {{#if this.affiliations.length}}
-            <aside class="scholar-page__sidebar">
-              <article class="scholar-page__card">
-                <h2>{{i18n "scholar.author.sections.affiliations"}}</h2>
-                <ul class="scholar-page__list">
-                  {{#each this.affiliations as |affiliation|}}
-                    <li>{{affiliation}}</li>
-                  {{/each}}
-                </ul>
-              </article>
-            </aside>
-          {{/if}}
-        </section>
+              <dl class="scholar-author-page__stats">
+                <div class="scholar-author-page__stat-row">
+                  <dt>{{i18n "scholar.author.metrics.papers"}}</dt>
+                  <dd>{{number this.author.paper_count}}</dd>
+                </div>
+                <div class="scholar-author-page__stat-row">
+                  <dt>{{i18n "scholar.author.metrics.citations"}}</dt>
+                  <dd>{{number this.author.citation_count}}</dd>
+                </div>
+                <div class="scholar-author-page__stat-row">
+                  <dt>{{i18n "scholar.author.metrics.h_index"}}</dt>
+                  <dd>{{number this.author.h_index}}</dd>
+                </div>
+              </dl>
+            </div>
+          </aside>
+
+          <main class="scholar-author-page__main">
+            <div class="scholar-author-page__section-header">
+              <h2>{{i18n "scholar.author.sections.papers"}}</h2>
+            </div>
+
+            {{#if this.papers.length}}
+              <div class="scholar-author-page__paper-list">
+                {{#each this.papers as |paper|}}
+                  <article class="scholar-result-card">
+                    <button
+                      type="button"
+                      class="scholar-result-card__link"
+                      {{on "click" (fn this.navigateTo paper.path)}}
+                    >
+                      <h3 class="scholar-result-card__title">{{paper.title}}</h3>
+                    </button>
+                    <div class="scholar-result-card__meta">
+                      {{#if paper.venue}}
+                        <span class="scholar-result-card__venue">{{paper.venue}}</span>
+                      {{/if}}
+                      {{#if paper.year}}
+                        <span class="scholar-result-card__year">{{paper.year}}</span>
+                      {{/if}}
+                    </div>
+                    {{#if paper.citation_count}}
+                      <span class="scholar-result-card__citations">
+                        {{number paper.citation_count}}
+                        {{i18n "scholar.paper.metrics.citations"}}
+                      </span>
+                    {{/if}}
+                  </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <p
+                class="scholar-author-page__empty"
+              >{{i18n "scholar.author.states.no_papers"}}</p>
+            {{/if}}
+          </main>
+        </div>
       {{/if}}
     </div>
   </template>

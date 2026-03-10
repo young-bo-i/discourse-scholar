@@ -5,6 +5,7 @@ import icon from "discourse/helpers/d-icon";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
+import ScholarPaperTabs from "./scholar-paper-tabs";
 
 export default class PaperDetailPage extends Component {
   get paper() {
@@ -19,10 +20,6 @@ export default class PaperDetailPage extends Component {
     return this.paper.fields_of_study || [];
   }
 
-  get sourceLabel() {
-    return this.paper.source?.toUpperCase();
-  }
-
   get errorMessage() {
     return this.paper.error_message || i18n("scholar.paper.states.unavailable");
   }
@@ -34,50 +31,28 @@ export default class PaperDetailPage extends Component {
   <template>
     <div class="scholar-page paper-detail-page">
       {{#if this.paper.load_error}}
-        <section class="scholar-page__error">
-          <article class="scholar-page__card">
-            <h2>{{i18n "scholar.paper.states.unavailable"}}</h2>
-            <p class="scholar-page__empty">
-              {{this.errorMessage}}
-            </p>
-          </article>
-        </section>
+        <div class="paper-detail-page__error-card">
+          <h2>{{i18n "scholar.paper.states.unavailable"}}</h2>
+          <p>{{this.errorMessage}}</p>
+        </div>
       {{else}}
-        <section class="paper-detail-page__hero">
-          <div class="paper-detail-page__hero-content">
-            <div class="paper-detail-page__eyebrow">
-              {{#if this.sourceLabel}}
-                <span class="paper-detail-page__badge">{{this.sourceLabel}}</span>
-              {{/if}}
-              {{#if this.paper.is_open_access}}
-                <span class="paper-detail-page__badge -success">
-                  {{icon "lock-open"}}
-                  {{i18n "scholar.paper.metrics.open_access"}}
-                </span>
-              {{/if}}
-            </div>
+        <div class="paper-detail-page__container">
+          <main class="paper-detail-page__main">
+            <article class="paper-detail-page__header-card">
+              <div class="paper-detail-page__id-line">
+                {{#if this.paper.doi}}
+                  <span>DOI: {{this.paper.doi}}</span>
+                {{/if}}
+                {{#if this.paper.id}}
+                  <span>Corpus ID: {{this.paper.id}}</span>
+                {{/if}}
+              </div>
 
-            <div class="paper-detail-page__id-badges">
-              {{#if this.paper.doi}}
-                <span class="paper-detail-page__id-badge">
-                  DOI:
-                  <code>{{this.paper.doi}}</code>
-                </span>
-              {{/if}}
-              {{#if this.paper.id}}
-                <span class="paper-detail-page__id-badge">
-                  ID:
-                  <code>{{this.paper.id}}</code>
-                </span>
-              {{/if}}
-            </div>
+              <h1 class="paper-detail-page__title">{{this.paper.title}}</h1>
 
-            <h1 class="paper-detail-page__title">{{this.paper.title}}</h1>
-
-            <div class="paper-detail-page__authors">
-              {{#if this.authors.length}}
-                {{#each this.authors as |author|}}
-                  <span class="paper-detail-page__author">
+              <div class="paper-detail-page__authors">
+                {{#if this.authors.length}}
+                  {{#each this.authors as |author|}}
                     {{#if author.path}}
                       <button
                         type="button"
@@ -89,92 +64,56 @@ export default class PaperDetailPage extends Component {
                         href={{author.url}}
                         target="_blank"
                         rel="noopener noreferrer"
+                        class="paper-detail-page__author-link"
                       >{{author.name}}</a>
                     {{else}}
-                      {{author.name}}
+                      <span class="paper-detail-page__author-name">{{author.name}}</span>
                     {{/if}}
-                  </span>
-                {{/each}}
-              {{else}}
-                <span>{{i18n "scholar.paper.states.no_authors"}}</span>
-              {{/if}}
-            </div>
+                  {{/each}}
+                {{else}}
+                  <span
+                    class="paper-detail-page__no-data"
+                  >{{i18n "scholar.paper.states.no_authors"}}</span>
+                {{/if}}
+              </div>
 
-            <div class="paper-detail-page__summary-line">
-              {{#if this.paper.venue}}
-                <span>{{this.paper.venue}}</span>
-              {{/if}}
-              {{#if this.paper.year}}
-                <span>{{this.paper.year}}</span>
-              {{/if}}
-              {{#if this.paper.publication_date}}
-                <span>{{this.paper.publication_date}}</span>
-              {{/if}}
-            </div>
-          </div>
-        </section>
+              <div class="paper-detail-page__pub-line">
+                {{#if this.paper.venue}}
+                  <span>{{i18n "scholar.paper.published_in"}}
+                    <strong>{{this.paper.venue}}</strong></span>
+                {{/if}}
+                {{#if this.paper.publication_date}}
+                  <span>{{this.paper.publication_date}}</span>
+                {{else if this.paper.year}}
+                  <span>{{this.paper.year}}</span>
+                {{/if}}
+              </div>
 
-        <section class="paper-detail-page__layout">
-          <main class="paper-detail-page__main">
-            <article class="paper-detail-page__card -abstract">
-              <h2>{{i18n "scholar.paper.sections.abstract"}}</h2>
-              {{#if this.paper.abstract}}
-                <p class="paper-detail-page__abstract">{{this.paper.abstract}}</p>
-              {{else}}
-                <p class="paper-detail-page__empty">
-                  {{i18n "scholar.paper.states.no_abstract"}}
-                </p>
-              {{/if}}
-            </article>
-
-            <article class="paper-detail-page__card">
-              <h2>{{i18n "scholar.paper.sections.fields_of_study"}}</h2>
               {{#if this.fieldsOfStudy.length}}
-                <div class="paper-detail-page__tags">
+                <div class="paper-detail-page__fields">
                   {{#each this.fieldsOfStudy as |field|}}
-                    <span class="paper-detail-page__tag">{{field}}</span>
+                    <span class="paper-detail-page__field">{{field}}</span>
                   {{/each}}
                 </div>
-              {{else}}
-                <p class="paper-detail-page__empty">
-                  {{i18n "scholar.paper.states.no_fields"}}
-                </p>
               {{/if}}
-            </article>
-          </main>
 
-          <aside class="paper-detail-page__sidebar">
-            <article class="paper-detail-page__card">
-              <h2>{{i18n "scholar.paper.sections.metrics"}}</h2>
-              <div class="paper-detail-page__metrics-grid">
-                <div class="paper-detail-page__metric">
-                  <span class="paper-detail-page__metric-value">{{number
-                      this.paper.citation_count
-                    }}</span>
-                  <span class="paper-detail-page__metric-label">{{i18n
-                      "scholar.paper.metrics.citations"
-                    }}</span>
+              {{#if this.paper.abstract}}
+                <div class="paper-detail-page__abstract">
+                  <p>{{this.paper.abstract}}</p>
                 </div>
-                <div class="paper-detail-page__metric">
-                  <span class="paper-detail-page__metric-value">{{number
-                      this.paper.reference_count
-                    }}</span>
-                  <span class="paper-detail-page__metric-label">{{i18n
-                      "scholar.paper.metrics.references"
-                    }}</span>
-                </div>
-              </div>
-            </article>
+              {{else}}
+                <p
+                  class="paper-detail-page__no-data"
+                >{{i18n "scholar.paper.states.no_abstract"}}</p>
+              {{/if}}
 
-            <article class="paper-detail-page__card">
-              <h2>{{i18n "scholar.paper.sections.links"}}</h2>
-              <div class="paper-detail-page__action-list">
+              <div class="paper-detail-page__actions">
                 {{#if this.paper.url}}
                   <a
                     href={{this.paper.url}}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="paper-detail-page__action-link"
+                    class="paper-detail-page__action-btn -primary"
                   >
                     {{icon "arrow-up-right-from-square"}}
                     {{i18n "scholar.paper.actions.view_source"}}
@@ -185,7 +124,7 @@ export default class PaperDetailPage extends Component {
                     href={{this.paper.pdf_url}}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="paper-detail-page__action-link -primary"
+                    class="paper-detail-page__action-btn"
                   >
                     {{icon "file-pdf"}}
                     {{i18n "scholar.paper.actions.open_pdf"}}
@@ -194,51 +133,68 @@ export default class PaperDetailPage extends Component {
               </div>
             </article>
 
-            <article class="paper-detail-page__card">
-              <h2>{{i18n "scholar.paper.sections.details"}}</h2>
-              <div class="paper-detail-page__meta-list">
+            <ScholarPaperTabs @paper={{this.paper}} />
+          </main>
+
+          <aside class="paper-detail-page__sidebar">
+            <div class="paper-detail-page__sidebar-card">
+              <div class="paper-detail-page__stat">
+                <span class="paper-detail-page__stat-value">{{number
+                    this.paper.citation_count
+                  }}</span>
+                <span class="paper-detail-page__stat-label">{{i18n
+                    "scholar.paper.metrics.citations"
+                  }}</span>
+              </div>
+            </div>
+
+            <div class="paper-detail-page__sidebar-card">
+              <div class="paper-detail-page__stat">
+                <span class="paper-detail-page__stat-value">{{number
+                    this.paper.reference_count
+                  }}</span>
+                <span class="paper-detail-page__stat-label">{{i18n
+                    "scholar.paper.metrics.references"
+                  }}</span>
+              </div>
+            </div>
+
+            {{#if this.paper.is_open_access}}
+              <div class="paper-detail-page__sidebar-card -open-access">
+                {{icon "lock-open"}}
+                <span>{{i18n "scholar.paper.metrics.open_access"}}</span>
+              </div>
+            {{/if}}
+
+            <div class="paper-detail-page__sidebar-card -details">
+              <h3>{{i18n "scholar.paper.sections.details"}}</h3>
+              <dl class="paper-detail-page__details-list">
                 {{#if this.paper.venue}}
-                  <div class="paper-detail-page__meta-item">
-                    <span class="paper-detail-page__meta-label">{{i18n
-                        "scholar.paper.meta.venue"
-                      }}</span>
-                    <span class="paper-detail-page__meta-value">{{this.paper.venue}}</span>
-                  </div>
+                  <dt>{{i18n "scholar.paper.meta.venue"}}</dt>
+                  <dd>{{this.paper.venue}}</dd>
                 {{/if}}
                 {{#if this.paper.year}}
-                  <div class="paper-detail-page__meta-item">
-                    <span class="paper-detail-page__meta-label">{{i18n
-                        "scholar.paper.meta.year"
-                      }}</span>
-                    <span class="paper-detail-page__meta-value">{{this.paper.year}}</span>
-                  </div>
+                  <dt>{{i18n "scholar.paper.meta.year"}}</dt>
+                  <dd>{{this.paper.year}}</dd>
                 {{/if}}
                 {{#if this.paper.publication_date}}
-                  <div class="paper-detail-page__meta-item">
-                    <span class="paper-detail-page__meta-label">{{i18n
-                        "scholar.paper.meta.publication_date"
-                      }}</span>
-                    <span class="paper-detail-page__meta-value">{{this.paper.publication_date}}</span>
-                  </div>
+                  <dt>{{i18n "scholar.paper.meta.publication_date"}}</dt>
+                  <dd>{{this.paper.publication_date}}</dd>
                 {{/if}}
                 {{#if this.paper.doi}}
-                  <div class="paper-detail-page__meta-item">
-                    <span class="paper-detail-page__meta-label">{{i18n
-                        "scholar.paper.meta.doi"
-                      }}</span>
-                    <span class="paper-detail-page__meta-value">
-                      <a
-                        href={{this.paper.doi_url}}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >{{this.paper.doi}}</a>
-                    </span>
-                  </div>
+                  <dt>{{i18n "scholar.paper.meta.doi"}}</dt>
+                  <dd>
+                    <a
+                      href={{this.paper.doi_url}}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >{{this.paper.doi}}</a>
+                  </dd>
                 {{/if}}
-              </div>
-            </article>
+              </dl>
+            </div>
           </aside>
-        </section>
+        </div>
       {{/if}}
     </div>
   </template>

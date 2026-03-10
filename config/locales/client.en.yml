@@ -32,6 +32,7 @@ en:
           papers: "Papers"
           authors: "Authors"
       paper:
+        published_in: "Published in"
         meta:
           venue: "Venue"
           year: "Year"
@@ -56,6 +57,14 @@ en:
         actions:
           view_source: "View Publisher"
           open_pdf: "Download PDF"
+        tabs:
+          citations: "Citations"
+          references: "References"
+          related: "Related Papers"
+          loading: "Loading..."
+          no_citations: "No citing papers found."
+          no_references: "No references found."
+          no_related: "No related papers found."
         links:
           source: "Source page"
           pdf: "Open-access PDF"

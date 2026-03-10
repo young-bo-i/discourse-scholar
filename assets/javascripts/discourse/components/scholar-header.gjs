@@ -4,20 +4,27 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import avatar from "discourse/helpers/avatar";
 import icon from "discourse/helpers/d-icon";
+import getURL from "discourse/lib/get-url";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
+import ScholarSearchBox from "./scholar-search-box";
 
 export default class ScholarHeader extends Component {
   @service currentUser;
   @service router;
+  @service siteSettings;
 
-  get isHomeActive() {
-    const url = this.router.currentURL;
-    return url === "/scholar" || url === "/scholar/";
+  get forumLogoUrl() {
+    return getURL(
+      this.siteSettings.site_logo_small_url ||
+        this.siteSettings.site_logo_url ||
+        ""
+    );
   }
 
-  get isSearchActive() {
-    return this.router.currentURL?.startsWith("/scholar/search");
+  get isHomePage() {
+    const url = this.router.currentURL;
+    return url === "/scholar" || url === "/scholar/";
   }
 
   @action
@@ -28,11 +35,6 @@ export default class ScholarHeader extends Component {
   @action
   goToHome() {
     DiscourseURL.routeTo("/scholar");
-  }
-
-  @action
-  goToSearch() {
-    DiscourseURL.routeTo("/scholar/search");
   }
 
   @action
@@ -54,7 +56,15 @@ export default class ScholarHeader extends Component {
             title={{i18n "scholar.header.back_to_forum"}}
             {{on "click" this.goToForum}}
           >
-            {{icon "comments"}}
+            {{#if this.forumLogoUrl}}
+              <img
+                src={{this.forumLogoUrl}}
+                alt={{this.siteSettings.title}}
+                class="scholar-header__forum-logo"
+              />
+            {{else}}
+              {{icon "comments"}}
+            {{/if}}
           </button>
 
           <button
@@ -67,22 +77,11 @@ export default class ScholarHeader extends Component {
           </button>
         </div>
 
-        <nav class="scholar-header__nav">
-          <button
-            type="button"
-            class="scholar-header__nav-link {{if this.isHomeActive '-active'}}"
-            {{on "click" this.goToHome}}
-          >
-            {{i18n "scholar.header.home"}}
-          </button>
-          <button
-            type="button"
-            class="scholar-header__nav-link {{if this.isSearchActive '-active'}}"
-            {{on "click" this.goToSearch}}
-          >
-            {{i18n "scholar.header.search"}}
-          </button>
-        </nav>
+        {{#unless this.isHomePage}}
+          <div class="scholar-header__search">
+            <ScholarSearchBox />
+          </div>
+        {{/unless}}
 
         <div class="scholar-header__right">
           {{#if this.currentUser}}

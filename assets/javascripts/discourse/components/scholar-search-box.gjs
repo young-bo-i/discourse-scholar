@@ -155,14 +155,6 @@ get hasSuggestions() {
             </button>
           {{/each}}
         </div>
-      {{else if this.loading}}
-        <div class="scholar-search-box__suggestions">
-          <div class="scholar-search-box__shimmer">
-            <div class="scholar-search-box__shimmer-line"></div>
-            <div class="scholar-search-box__shimmer-line"></div>
-            <div class="scholar-search-box__shimmer-line"></div>
-          </div>
-        </div>
       {{/if}}
     </section>
   </template>

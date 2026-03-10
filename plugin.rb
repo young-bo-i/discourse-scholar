@@ -19,6 +19,7 @@ register_svg_icon "users"
 register_svg_icon "file-pdf"
 register_svg_icon "arrow-up-right-from-square"
 register_svg_icon "lock-open"
+register_svg_icon "user"
 
 module ::DiscourseScholar
   PLUGIN_NAME = "discourse-scholar"
@@ -44,6 +45,7 @@ module ::DiscourseScholar
   SEARCH_PAPER_FIELDS = %w[title authors year citationCount venue].freeze
   SEARCH_AUTHOR_FIELDS = %w[name affiliations paperCount citationCount hIndex].freeze
   AUTOCOMPLETE_AUTHOR_FIELDS = %w[name affiliations].freeze
+  RELATED_PAPER_FIELDS = %w[title authors year citationCount venue].freeze
 end
 
 require_relative "lib/discourse_scholar/engine"

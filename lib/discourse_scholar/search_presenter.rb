@@ -10,6 +10,10 @@ module DiscourseScholar
       def autocomplete_as_json(results, query)
         new.autocomplete_as_json(results, query)
       end
+
+      def papers_as_json(items)
+        new.send(:normalize_papers, items)
+      end
     end
 
     def results_as_json(results, query)
@@ -23,8 +27,8 @@ module DiscourseScholar
     def autocomplete_as_json(results, query)
       {
         query: query.to_s,
-        items: normalize_paper_suggestions(results[:papers] || results["papers"]) +
-          normalize_author_suggestions(results[:authors] || results["authors"]),
+        items: normalize_author_suggestions(results[:authors] || results["authors"]) +
+          normalize_paper_suggestions(results[:papers] || results["papers"]),
       }
     end
 
