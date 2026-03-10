@@ -45,6 +45,23 @@ body.scholar-active {
 }
 
 // ============================================================
+// Scholar icon in forum header
+// ============================================================
+
+.scholar-forum-header-icon {
+  .scholar-logo-icon {
+    width: 20px;
+    height: 17px;
+    color: var(--header-primary);
+    vertical-align: middle;
+  }
+
+  &:hover .scholar-logo-icon {
+    color: var(--tertiary);
+  }
+}
+
+// ============================================================
 // Scholar Header
 // ============================================================
 
