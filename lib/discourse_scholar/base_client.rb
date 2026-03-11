@@ -14,72 +14,70 @@ module DiscourseScholar
     class ResourceNotFound < Error; end
     class UpstreamError < Error; end
 
-    @connection_mutex = Mutex.new
+    CONNECTION_MUTEX = Mutex.new
 
-    class << self
-      def reset_connection!
-        @connection_mutex.synchronize do
-          @shared_connection = nil
-          @cached_base_url = nil
-        end
+    def self.reset_connection!
+      CONNECTION_MUTEX.synchronize do
+        @shared_connection = nil
+        @cached_base_url = nil
       end
+    end
 
-      def shared_connection
-        @connection_mutex.synchronize do
-          base_url = validated_base_url
-          if @shared_connection.nil? || @cached_base_url != base_url
-            @cached_base_url = base_url
-            @shared_connection =
-              Faraday.new(
-                url: base_url,
-                request: {
-                  open_timeout: OPEN_TIMEOUT_SECONDS,
-                  timeout: READ_TIMEOUT_SECONDS,
-                },
-              )
-          end
-          @shared_connection
+    def self.shared_connection
+      CONNECTION_MUTEX.synchronize do
+        base_url = validated_base_url
+        if @shared_connection.nil? || @cached_base_url != base_url
+          @cached_base_url = base_url
+          @shared_connection =
+            Faraday.new(
+              url: base_url,
+              request: {
+                open_timeout: OPEN_TIMEOUT_SECONDS,
+                timeout: READ_TIMEOUT_SECONDS,
+              },
+            )
         end
+        @shared_connection
       end
+    end
 
-      def api_key
-        key =
-          ENV["DISCOURSE_SCHOLAR_API_KEY"].presence || SiteSetting.discourse_scholar_api_key
-        if key.blank?
-          raise MissingConfiguration, I18n.t("discourse_scholar.errors.missing_api_key")
-        end
-        key
+    def self.api_key
+      key =
+        ENV["DISCOURSE_SCHOLAR_API_KEY"].presence || SiteSetting.discourse_scholar_api_key
+      if key.blank?
+        raise MissingConfiguration, I18n.t("discourse_scholar.errors.missing_api_key")
       end
+      key
+    end
 
-      def validated_base_url
-        uri = URI.parse(SiteSetting.discourse_scholar_api_base_url)
-        host = uri.host&.downcase
+    def self.validated_base_url
+      uri = URI.parse(SiteSetting.discourse_scholar_api_base_url)
+      host = uri.host&.downcase
 
-        if !uri.is_a?(URI::HTTPS) || host.blank? || !ALLOWED_HOSTS.include?(host) || uri.user ||
-             uri.password || uri.query || uri.fragment
-          raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
-        end
-
-        base_url = "#{uri.scheme}://#{host}"
-        base_url += ":#{uri.port}" if uri.port.present? && uri.port != 443
-
-        normalized_path = uri.path.presence == "/" ? nil : uri.path.presence&.sub(%r{/*$}, "")
-        base_url += normalized_path if normalized_path.present?
-
-        base_url
-      rescue URI::InvalidURIError
+      if !uri.is_a?(URI::HTTPS) || host.blank? || !ALLOWED_HOSTS.include?(host) || uri.user ||
+           uri.password || uri.query || uri.fragment
         raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
       end
+
+      base_url = "#{uri.scheme}://#{host}"
+      base_url += ":#{uri.port}" if uri.port.present? && uri.port != 443
+
+      normalized_path = uri.path.presence == "/" ? nil : uri.path.presence&.sub(%r{/*$}, "")
+      base_url += normalized_path if normalized_path.present?
+
+      base_url
+    rescue URI::InvalidURIError
+      raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
     end
 
     protected
 
     def post_json(path, body)
       response =
-        self.class.shared_connection.post(path) do |request|
+        BaseClient.shared_connection.post(path) do |request|
           request.headers["Content-Type"] = "application/json"
           request.headers["Accept"] = "application/json"
-          request.headers["Authorization"] = "Bearer #{self.class.api_key}"
+          request.headers["Authorization"] = "Bearer #{BaseClient.api_key}"
           request.body = body.to_json
         end
 
