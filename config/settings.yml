@@ -7,3 +7,10 @@ discourse_scholar:
   discourse_scholar_api_key:
     default: ""
     secret: true
+  discourse_scholar_llm_endpoint:
+    default: ""
+  discourse_scholar_llm_api_key:
+    default: ""
+    secret: true
+  discourse_scholar_llm_model:
+    default: ""

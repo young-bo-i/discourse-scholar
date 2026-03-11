@@ -32,6 +32,10 @@ en:
         types:
           paper: "Paper"
           author: "Author"
+        suggestions:
+          matching_authors: "Matching Authors"
+          matching_papers: "Matching Papers"
+          see_all: "See All Results for \"%{query}\""
         sections:
           papers: "Papers"
           authors: "Authors"
@@ -82,11 +86,17 @@ en:
           no_authors: "Author information is unavailable."
           no_fields: "No fields of study are available."
           unavailable: "Paper details are temporarily unavailable."
+          translate_error: "Translation failed, please try again."
         actions:
           view_source: "View Publisher"
           open_pdf: "Download PDF"
           expand: "Expand"
           collapse: "Collapse"
+          translate: "Translate to Chinese"
+          translating: "Translating..."
+          hide_translation: "Hide Translation"
+        translation:
+          label: "Chinese Translation"
         tabs:
           citations: "Citations"
           references: "References"

@@ -3,6 +3,9 @@ en:
     discourse_scholar_enabled: "Enable the public scholar pages plugin"
     discourse_scholar_api_base_url: "Base URL for the OpenScholay API"
     discourse_scholar_api_key: "API key for OpenScholay (sk-... format)"
+    discourse_scholar_llm_endpoint: "LLM API endpoint URL for translation (OpenAI-compatible)"
+    discourse_scholar_llm_api_key: "API key for the LLM translation service"
+    discourse_scholar_llm_model: "Model identifier for the LLM translation service"
   discourse_scholar:
     errors:
       invalid_base_url: "The scholar API base URL must be the HTTPS OpenScholay host."
@@ -13,3 +16,7 @@ en:
       upstream_unavailable: "The scholar service is temporarily unavailable."
       upstream_error: "The scholar service returned an error."
       invalid_response: "The scholar service returned an invalid response."
+      missing_llm_config: "Translation service is not configured. Please set LLM endpoint, API key, and model."
+      translation_failed: "Translation service returned an error."
+      translation_unavailable: "Translation service is temporarily unavailable."
+      translate_no_content: "No content provided for translation."

@@ -4,6 +4,7 @@ import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import icon from "discourse/helpers/d-icon";
+import { ajax } from "discourse/lib/ajax";
 import number from "discourse/helpers/number";
 import DiscourseURL from "discourse/lib/url";
 import { i18n } from "discourse-i18n";
@@ -11,6 +12,11 @@ import ScholarPaperTabs from "./scholar-paper-tabs";
 
 export default class PaperDetailPage extends Component {
   @tracked abstractExpanded = false;
+  @tracked translatedTitle = null;
+  @tracked translatedAbstract = null;
+  @tracked translating = false;
+  @tracked translateError = null;
+  @tracked showTranslation = false;
 
   get paper() {
     return this.args.paper || {};
@@ -28,9 +34,42 @@ export default class PaperDetailPage extends Component {
     return this.paper.error_message || i18n("scholar.paper.states.unavailable");
   }
 
+  get hasTranslation() {
+    return this.translatedTitle || this.translatedAbstract;
+  }
+
   @action
   toggleAbstract() {
     this.abstractExpanded = !this.abstractExpanded;
+  }
+
+  @action
+  async translate() {
+    if (this.hasTranslation) {
+      this.showTranslation = !this.showTranslation;
+      return;
+    }
+
+    this.translating = true;
+    this.translateError = null;
+
+    try {
+      const result = await ajax("/scholar/translate.json", {
+        type: "POST",
+        data: {
+          title: this.paper.title,
+          abstract: this.paper.abstract,
+        },
+      });
+
+      this.translatedTitle = result.translated_title;
+      this.translatedAbstract = result.translated_abstract;
+      this.showTranslation = true;
+    } catch {
+      this.translateError = true;
+    } finally {
+      this.translating = false;
+    }
   }
 
   navigateTo(path) {
@@ -58,6 +97,9 @@ export default class PaperDetailPage extends Component {
               </div>
 
               <h1 class="paper-detail-page__title">{{this.paper.title}}</h1>
+              {{#if (and this.showTranslation this.translatedTitle)}}
+                <p class="paper-detail-page__translated-title">{{this.translatedTitle}}</p>
+              {{/if}}
 
               <div class="paper-detail-page__authors">
                 {{#if this.authors.length}}
@@ -127,6 +169,15 @@ export default class PaperDetailPage extends Component {
                     {{i18n "scholar.paper.actions.expand"}}
                   {{/if}}
                 </button>
+                {{#if (and this.showTranslation this.translatedAbstract)}}
+                  <div class="paper-detail-page__translated-abstract">
+                    <div class="paper-detail-page__translated-label">
+                      {{icon "language"}}
+                      {{i18n "scholar.paper.translation.label"}}
+                    </div>
+                    <p>{{this.translatedAbstract}}</p>
+                  </div>
+                {{/if}}
               {{else}}
                 <p
                   class="paper-detail-page__no-data"
@@ -155,6 +206,30 @@ export default class PaperDetailPage extends Component {
                     {{icon "file-pdf"}}
                     {{i18n "scholar.paper.actions.open_pdf"}}
                   </a>
+                {{/if}}
+                <button
+                  type="button"
+                  class="paper-detail-page__action-btn -translate
+                    {{if this.showTranslation '-active'}}
+                    {{if this.translating '-loading'}}"
+                  disabled={{this.translating}}
+                  {{on "click" this.translate}}
+                >
+                  {{#if this.translating}}
+                    {{icon "spinner"}}
+                    {{i18n "scholar.paper.actions.translating"}}
+                  {{else if this.showTranslation}}
+                    {{icon "language"}}
+                    {{i18n "scholar.paper.actions.hide_translation"}}
+                  {{else}}
+                    {{icon "language"}}
+                    {{i18n "scholar.paper.actions.translate"}}
+                  {{/if}}
+                </button>
+                {{#if this.translateError}}
+                  <span class="paper-detail-page__translate-error">
+                    {{i18n "scholar.paper.states.translate_error"}}
+                  </span>
                 {{/if}}
               </div>
             </article>

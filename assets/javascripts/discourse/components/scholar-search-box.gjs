@@ -30,8 +30,16 @@ export default class ScholarSearchBox extends Component {
     this.searchPromise = null;
   }
 
-get hasSuggestions() {
+  get hasSuggestions() {
     return this.suggestions.length > 0;
+  }
+
+  get authorSuggestions() {
+    return this.suggestions.filter((item) => item.type === "author");
+  }
+
+  get paperSuggestions() {
+    return this.suggestions.filter((item) => item.type === "paper");
   }
 
   get currentQuery() {
@@ -156,29 +164,67 @@ get hasSuggestions() {
 
       {{#if this.hasSuggestions}}
         <div class="scholar-search-box__suggestions">
-          {{#each this.suggestions as |item|}}
-            <button
-              type="button"
-              class="scholar-search-box__suggestion"
-              {{on "click" (fn this.selectSuggestion item.path)}}
-            >
-              <span class="scholar-search-box__suggestion-content">
-                <span class="scholar-search-box__suggestion-label">
-                  {{item.label}}
-                </span>
-                {{#if item.subtext}}
-                  <span class="scholar-search-box__suggestion-meta">
-                    {{item.subtext}}
+          {{#if this.authorSuggestions.length}}
+            <div class="scholar-search-box__group">
+              <div class="scholar-search-box__group-header">
+                {{i18n "scholar.search.suggestions.matching_authors"}}
+              </div>
+              {{#each this.authorSuggestions as |item|}}
+                <button
+                  type="button"
+                  class="scholar-search-box__suggestion -author"
+                  {{on "click" (fn this.selectSuggestion item.path)}}
+                >
+                  {{icon "user"}}
+                  <span class="scholar-search-box__suggestion-content">
+                    <span class="scholar-search-box__suggestion-label">
+                      {{item.label}}
+                    </span>
+                    {{#if item.subtext}}
+                      <span class="scholar-search-box__suggestion-meta">
+                        {{item.subtext}}
+                      </span>
+                    {{/if}}
                   </span>
-                {{/if}}
-              </span>
-              <span
-                class="scholar-search-box__suggestion-badge -{{item.type}}"
-              >
-                {{i18n (concat "scholar.search.types." item.type)}}
-              </span>
-            </button>
-          {{/each}}
+                </button>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          {{#if this.paperSuggestions.length}}
+            <div class="scholar-search-box__group">
+              <div class="scholar-search-box__group-header">
+                {{i18n "scholar.search.suggestions.matching_papers"}}
+              </div>
+              {{#each this.paperSuggestions as |item|}}
+                <button
+                  type="button"
+                  class="scholar-search-box__suggestion -paper"
+                  {{on "click" (fn this.selectSuggestion item.path)}}
+                >
+                  {{icon "file-lines"}}
+                  <span class="scholar-search-box__suggestion-content">
+                    <span class="scholar-search-box__suggestion-label">
+                      {{item.label}}
+                    </span>
+                    {{#if item.subtext}}
+                      <span class="scholar-search-box__suggestion-meta">
+                        {{item.subtext}}
+                      </span>
+                    {{/if}}
+                  </span>
+                </button>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          <button
+            type="button"
+            class="scholar-search-box__see-all"
+            {{on "click" this.handleSubmit}}
+          >
+            {{i18n "scholar.search.suggestions.see_all" query=this.currentQuery}}
+          </button>
         </div>
       {{/if}}
     </section>

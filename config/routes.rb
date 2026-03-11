@@ -9,6 +9,7 @@ DiscourseScholar::Engine.routes.draw do
   get "/scholar/author/:id" => "authors#show"
   get "/scholar/search" => "search#show"
   get "/scholar/autocomplete" => "search#autocomplete", defaults: { format: :json }
+  post "/scholar/translate" => "translate#create", defaults: { format: :json }
 end
 
 Discourse::Application.routes.draw do

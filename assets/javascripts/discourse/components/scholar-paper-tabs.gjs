@@ -139,7 +139,7 @@ export default class ScholarPaperTabs extends Component {
           {{#if this.currentItems.length}}
             <div class="scholar-paper-tabs__list">
               {{#each this.currentItems as |paper|}}
-                <article class="scholar-result-card">
+                <article class="scholar-result-card -compact">
                   <button
                     type="button"
                     class="scholar-result-card__link"
@@ -147,10 +147,22 @@ export default class ScholarPaperTabs extends Component {
                   >
                     <h3 class="scholar-result-card__title">{{paper.title}}</h3>
                   </button>
+                  {{#if paper.authors.length}}
+                    <div class="scholar-result-card__authors">
+                      {{#each paper.authors as |author|}}
+                        {{#if author.path}}
+                          <button
+                            type="button"
+                            class="scholar-result-card__author-inline"
+                            {{on "click" (fn this.navigateTo author.path)}}
+                          >{{author.name}}</button>
+                        {{else if author.name}}
+                          <span>{{author.name}}</span>
+                        {{/if}}
+                      {{/each}}
+                    </div>
+                  {{/if}}
                   <div class="scholar-result-card__meta">
-                    {{#if paper.authors}}
-                      <span class="scholar-result-card__authors">{{paper.authors}}</span>
-                    {{/if}}
                     {{#if paper.venue}}
                       <span class="scholar-result-card__venue">{{paper.venue}}</span>
                     {{/if}}
@@ -158,12 +170,6 @@ export default class ScholarPaperTabs extends Component {
                       <span class="scholar-result-card__year">{{paper.year}}</span>
                     {{/if}}
                   </div>
-                  {{#if paper.citation_count}}
-                    <span class="scholar-result-card__citations">
-                      {{number paper.citation_count}}
-                      {{i18n "scholar.paper.metrics.citations"}}
-                    </span>
-                  {{/if}}
                 </article>
               {{/each}}
             </div>

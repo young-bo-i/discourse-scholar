@@ -24,6 +24,9 @@ register_svg_icon "chevron-right"
 register_svg_icon "quote-left"
 register_svg_icon "copy"
 register_svg_icon "xmark"
+register_svg_icon "file-lines"
+register_svg_icon "language"
+register_svg_icon "spinner"
 
 module ::DiscourseScholar
   PLUGIN_NAME = "discourse-scholar"
@@ -63,4 +66,5 @@ after_initialize do
   require_relative "lib/discourse_scholar/paper_presenter"
   require_relative "lib/discourse_scholar/author_presenter"
   require_relative "lib/discourse_scholar/search_presenter"
+  require_relative "lib/discourse_scholar/translate_client"
 end
