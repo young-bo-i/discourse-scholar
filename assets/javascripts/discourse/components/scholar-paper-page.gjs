@@ -38,6 +38,14 @@ export default class PaperDetailPage extends Component {
     return this.translatedTitle || this.translatedAbstract;
   }
 
+  get showTranslatedTitle() {
+    return this.showTranslation && this.translatedTitle;
+  }
+
+  get showTranslatedAbstract() {
+    return this.showTranslation && this.translatedAbstract;
+  }
+
   @action
   toggleAbstract() {
     this.abstractExpanded = !this.abstractExpanded;
@@ -97,7 +105,7 @@ export default class PaperDetailPage extends Component {
               </div>
 
               <h1 class="paper-detail-page__title">{{this.paper.title}}</h1>
-              {{#if (and this.showTranslation this.translatedTitle)}}
+              {{#if this.showTranslatedTitle}}
                 <p class="paper-detail-page__translated-title">{{this.translatedTitle}}</p>
               {{/if}}
 
@@ -169,7 +177,7 @@ export default class PaperDetailPage extends Component {
                     {{i18n "scholar.paper.actions.expand"}}
                   {{/if}}
                 </button>
-                {{#if (and this.showTranslation this.translatedAbstract)}}
+                {{#if this.showTranslatedAbstract}}
                   <div class="paper-detail-page__translated-abstract">
                     <div class="paper-detail-page__translated-label">
                       {{icon "language"}}
