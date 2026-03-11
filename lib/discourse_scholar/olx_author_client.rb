@@ -1,0 +1,29 @@
+# frozen_string_literal: true
+
+module DiscourseScholar
+  class OlxAuthorClient < BaseClient
+    DETAIL_PATH = "v1/olx/authors/get"
+    PAPERS_PATH = "v1/olx/authors/papers"
+
+    def fetch(author_id)
+      raise ResourceNotFound, I18n.t("discourse_scholar.errors.author_not_found") if author_id.blank?
+
+      author = post_json(DETAIL_PATH, { id: route_id(author_id) })
+
+      raise ResourceNotFound, I18n.t("discourse_scholar.errors.author_not_found") if author.blank?
+
+      author
+    end
+
+    def fetch_papers(author_id, limit: 12)
+      post_json(PAPERS_PATH, { author_id: route_id(author_id), limit: }) || {}
+    end
+
+    def fetch_with_papers(author_id, papers_limit: 12)
+      parallel_map(
+        author: -> { fetch(author_id) },
+        papers: -> { fetch_papers(author_id, limit: papers_limit) },
+      )
+    end
+  end
+end

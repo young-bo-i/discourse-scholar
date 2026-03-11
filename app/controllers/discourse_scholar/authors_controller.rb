@@ -11,18 +11,16 @@ module DiscourseScholar
     private
 
     def render_author_json
+      source, id = DiscourseScholar::SourceResolver.resolve(params[:id])
+
       with_upstream_error_handling do
-        author = cached_json(cache_key(params[:id]), rate_limit_scope: "author") do
-          DiscourseScholar::AuthorClient.new.fetch_with_papers(params[:id])
+        author = cached_json("discourse-scholar:author:#{source}:#{id}", rate_limit_scope: "author") do
+          DiscourseScholar::SourceResolver.author_client(source).fetch_with_papers(id)
         end
 
         discourse_expires_in 5.minutes
         render json: DiscourseScholar::AuthorPresenter.new(author[:author], author[:papers]).as_json
       end
-    end
-
-    def cache_key(author_id)
-      "discourse-scholar:author:#{author_id}"
     end
   end
 end

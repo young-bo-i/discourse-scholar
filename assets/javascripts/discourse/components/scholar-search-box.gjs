@@ -76,6 +76,10 @@ export default class ScholarSearchBox extends Component {
     this.debounceTimer = setTimeout(() => this.fetchSuggestions(), DEBOUNCE_MS);
   }
 
+  get currentSource() {
+    return this.args.source || "stc";
+  }
+
   @action
   handleSubmit(event) {
     event.preventDefault();
@@ -86,7 +90,9 @@ export default class ScholarSearchBox extends Component {
     }
 
     this.dismissSuggestions();
-    DiscourseURL.routeTo(`/scholar/search?q=${encodeURIComponent(query)}`);
+    DiscourseURL.routeTo(
+      `/scholar/search?q=${encodeURIComponent(query)}&source=${this.currentSource}`
+    );
   }
 
   @action
@@ -120,7 +126,7 @@ export default class ScholarSearchBox extends Component {
 
     try {
       this.searchPromise = ajax(
-        `/scholar/autocomplete.json?q=${encodeURIComponent(query)}`
+        `/scholar/autocomplete.json?q=${encodeURIComponent(query)}&source=${this.currentSource}`
       );
       const response = await this.searchPromise;
 

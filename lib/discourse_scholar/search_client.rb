@@ -83,19 +83,19 @@ module DiscourseScholar
     end
 
     def search_papers_cache_key(query, limit, offset)
-      "discourse-scholar:upstream:papers-search:#{query.downcase}:#{limit}:#{offset}"
+      "discourse-scholar:upstream:stc:papers-search:#{query.downcase}:#{limit}:#{offset}"
     end
 
     def search_authors_cache_key(query, limit)
-      "discourse-scholar:upstream:authors-search:#{query.downcase}:#{limit}"
+      "discourse-scholar:upstream:stc:authors-search:#{query.downcase}:#{limit}"
     end
 
     def autocomplete_authors_cache_key(query, limit)
-      "discourse-scholar:upstream:authors-autocomplete:#{query.downcase}:#{limit}"
+      "discourse-scholar:upstream:stc:authors-autocomplete:#{query.downcase}:#{limit}"
     end
 
     def paper_autocomplete_cache_key(query, limit)
-      "discourse-scholar:upstream:papers-autocomplete:#{query.downcase}:#{limit}"
+      "discourse-scholar:upstream:stc:papers-autocomplete:#{query.downcase}:#{limit}"
     end
   end
 end

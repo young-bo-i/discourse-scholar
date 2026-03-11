@@ -26,7 +26,16 @@ module DiscourseScholar
     end
 
     def route_id(raw_id)
-      raw_id.to_s.split(":", 2).last
+      s = raw_id.to_s
+      return s.split("/").last if s.include?("/")
+      s.split(":", 2).last
+    end
+
+    def source_path_id(object)
+      id = value(object, :id)
+      source = value(object, :source)
+      rid = route_id(id)
+      source.present? && source != "stc" ? "#{source}:#{rid}" : rid
     end
 
     def count_value(object, *keys)

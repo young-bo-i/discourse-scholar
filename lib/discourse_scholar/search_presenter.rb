@@ -66,7 +66,7 @@ module DiscourseScholar
           authors: normalize_authors_with_ids(paper),
           doi:,
           url: value(paper, :url),
-          path: "/scholar/paper/#{route_id(value(paper, :id))}",
+          path: "/scholar/paper/#{source_path_id(paper)}",
         }.compact
       end
     end
@@ -82,7 +82,7 @@ module DiscourseScholar
           paper_count: count_value(author, :paper_count, :paperCount),
           citation_count: count_value(author, :citation_count, :citationCount),
           h_index: count_value(author, :h_index, :hIndex),
-          path: "/scholar/author/#{route_id(value(author, :id))}",
+          path: "/scholar/author/#{source_path_id(author)}",
         }.compact
       end
     end
@@ -95,13 +95,12 @@ module DiscourseScholar
         paper_id = value(item, :paperId, :id)
         next if paper_id.blank?
 
-        rid = route_id(paper_id)
         {
           id: paper_id,
-          route_id: rid,
+          route_id: route_id(paper_id),
           type: "paper",
           label: title,
-          path: "/scholar/paper/#{rid}",
+          path: "/scholar/paper/#{source_path_id(item)}",
         }
       end
     end
@@ -114,28 +113,27 @@ module DiscourseScholar
         author_id = value(item, :authorId, :id)
         next if author_id.blank?
 
-        rid = route_id(author_id)
         {
           id: author_id,
-          route_id: rid,
+          route_id: route_id(author_id),
           type: "author",
           label: name,
           subtext: Array(value(item, :affiliations)).first,
-          path: "/scholar/author/#{rid}",
+          path: "/scholar/author/#{source_path_id(item)}",
         }.compact
       end
     end
 
     def normalize_authors_with_ids(paper)
-      Array(value(paper, :authors)).filter_map do |author|
-        source = author["author"] || author[:author] || author
-        name = value(source, :name)
+      Array(value(paper, :authors)).filter_map do |author_data|
+        src = author_data["author"] || author_data[:author] || author_data
+        name = value(src, :name)
         next if name.blank?
 
-        author_id = value(source, :authorId, :id)
+        author_id = value(src, :authorId, :id)
         entry = { name: }
         if author_id.present?
-          entry[:path] = "/scholar/author/#{route_id(author_id)}"
+          entry[:path] = "/scholar/author/#{source_path_id(src)}"
         end
         entry
       end

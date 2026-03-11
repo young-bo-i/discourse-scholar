@@ -25,7 +25,7 @@ module DiscourseScholar
         pdf_url: normalized_pdf_url,
         fields_of_study: normalized_fields_of_study,
         authors: normalized_authors,
-        path: "/scholar/paper/#{route_id(value(raw_paper, :id))}",
+        path: "/scholar/paper/#{source_path_id(raw_paper)}",
       }.compact
     end
 
@@ -101,7 +101,7 @@ module DiscourseScholar
         url: safe_url(value(source, :url)),
         orcid: value(source, :orcid),
         affiliations: normalized_affiliations(source, author),
-        path: "/scholar/author/#{route_id(value(source, :id, :authorId))}",
+        path: "/scholar/author/#{source_path_id(source)}",
       }.compact
     end
 

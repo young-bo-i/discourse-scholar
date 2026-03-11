@@ -29,9 +29,11 @@ module DiscourseScholar
     private
 
     def render_paper_json
+      source, id = DiscourseScholar::SourceResolver.resolve(params[:id])
+
       with_upstream_error_handling do
-        paper = cached_json(cache_key(params[:id]), rate_limit_scope: "paper") do
-          DiscourseScholar::PaperClient.new.fetch(params[:id])
+        paper = cached_json("discourse-scholar:paper:#{source}:#{id}", rate_limit_scope: "paper") do
+          DiscourseScholar::SourceResolver.paper_client(source).fetch(id)
         end
 
         discourse_expires_in 5.minutes
@@ -40,9 +42,11 @@ module DiscourseScholar
     end
 
     def render_related_papers(kind)
+      source, id = DiscourseScholar::SourceResolver.resolve(params[:id])
+
       with_upstream_error_handling do
-        data = cached_json("discourse-scholar:paper:#{kind}:#{params[:id]}", rate_limit_scope: "paper_#{kind}") do
-          yield DiscourseScholar::PaperClient.new, params[:id]
+        data = cached_json("discourse-scholar:paper:#{kind}:#{source}:#{id}", rate_limit_scope: "paper_#{kind}") do
+          yield DiscourseScholar::SourceResolver.paper_client(source), id
         end
 
         items = data.is_a?(Hash) ? (data["items"] || data[:items] || []) : Array(data)
@@ -51,10 +55,6 @@ module DiscourseScholar
         discourse_expires_in 5.minutes
         render json: { papers: papers }
       end
-    end
-
-    def cache_key(paper_id)
-      "discourse-scholar:paper:#{paper_id}"
     end
   end
 end

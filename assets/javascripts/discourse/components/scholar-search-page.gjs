@@ -31,6 +31,18 @@ export default class ScholarSearchPage extends Component {
     return this.results.query || "";
   }
 
+  get currentSource() {
+    return this.results.source || "stc";
+  }
+
+  get isSourceStc() {
+    return this.currentSource === "stc";
+  }
+
+  get isSourceOlx() {
+    return this.currentSource === "olx";
+  }
+
   get errorMessage() {
     return this.results.error_message || i18n("scholar.search.unavailable");
   }
@@ -167,7 +179,19 @@ export default class ScholarSearchPage extends Component {
   @action
   goToPage(pageNum) {
     const q = encodeURIComponent(this.query);
-    DiscourseURL.routeTo(`/scholar/search?q=${q}&page=${pageNum}`);
+    const source = this.currentSource;
+    DiscourseURL.routeTo(
+      `/scholar/search?q=${q}&page=${pageNum}&source=${source}`
+    );
+  }
+
+  @action
+  switchSource(source) {
+    if (source === this.currentSource) {
+      return;
+    }
+    const q = encodeURIComponent(this.query);
+    DiscourseURL.routeTo(`/scholar/search?q=${q}&source=${source}`);
   }
 
   @action
@@ -225,6 +249,21 @@ export default class ScholarSearchPage extends Component {
             </div>
           </section>
         {{/if}}
+
+        <div class="scholar-search-page__source-tabs">
+          <button
+            type="button"
+            class="scholar-search-page__source-tab
+              {{if this.isSourceStc '-active'}}"
+            {{on "click" (fn this.switchSource "stc")}}
+          >{{i18n "scholar.search.sources.stc"}}</button>
+          <button
+            type="button"
+            class="scholar-search-page__source-tab
+              {{if this.isSourceOlx '-active'}}"
+            {{on "click" (fn this.switchSource "olx")}}
+          >{{i18n "scholar.search.sources.olx"}}</button>
+        </div>
 
         <div class="scholar-search-page__container">
           <aside class="scholar-search-page__sidebar">

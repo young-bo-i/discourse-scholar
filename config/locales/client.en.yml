@@ -32,6 +32,9 @@ en:
         types:
           paper: "Paper"
           author: "Author"
+        sources:
+          stc: "Semantic Scholar"
+          olx: "OpenAlex"
         suggestions:
           matching_authors: "Matching Authors"
           matching_papers: "Matching Papers"

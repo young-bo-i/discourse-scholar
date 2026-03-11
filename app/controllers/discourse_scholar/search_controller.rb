@@ -20,7 +20,8 @@ module DiscourseScholar
       with_upstream_error_handling do
         perform_rate_limit!("autocomplete")
 
-        results = DiscourseScholar::SearchClient.new.autocomplete(normalized_query)
+        client = DiscourseScholar::SourceResolver.search_client(current_source)
+        results = client.autocomplete(normalized_query)
 
         render json: DiscourseScholar::SearchPresenter.autocomplete_as_json(results, normalized_query)
       end
@@ -31,6 +32,7 @@ module DiscourseScholar
     def render_search_json
       normalized_query = normalized_query_param
       page = [params[:page].to_i, 1].max
+      source = current_source
       per_page = DiscourseScholar::SearchClient::SEARCH_PAPER_LIMIT
 
       if normalized_query.blank? || normalized_query.length > MAX_QUERY_LENGTH
@@ -41,7 +43,8 @@ module DiscourseScholar
         perform_rate_limit!("search")
 
         offset = (page - 1) * per_page
-        results = DiscourseScholar::SearchClient.new.search(normalized_query, offset:)
+        client = DiscourseScholar::SourceResolver.search_client(source)
+        results = client.search(normalized_query, offset:)
 
         discourse_expires_in 2.minutes
         render json: DiscourseScholar::SearchPresenter.results_as_json(results, normalized_query, page:, per_page:)
@@ -50,6 +53,10 @@ module DiscourseScholar
 
     def normalized_query_param
       params[:q].to_s.strip.first(MAX_QUERY_LENGTH)
+    end
+
+    def current_source
+      DiscourseScholar::SourceResolver.normalize_source(params[:source])
     end
   end
 end

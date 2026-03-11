@@ -1383,6 +1383,35 @@ body.scholar-active {
   text-overflow: ellipsis;
 }
 
+.scholar-search-page__source-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-low);
+}
+
+.scholar-search-page__source-tab {
+  padding: 0.5rem 1.25rem;
+  font-size: var(--font-up-1);
+  font-weight: 500;
+  color: var(--primary-medium);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: var(--primary);
+  }
+
+  &.-active {
+    color: var(--tertiary);
+    border-bottom-color: var(--tertiary);
+  }
+}
+
 .scholar-search-page__container {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);

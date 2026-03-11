@@ -21,7 +21,12 @@ export default class ScholarPaperTabs extends Component {
   }
 
   get paperId() {
-    return this.paper.route_id || this.paper.id;
+    const rid = this.paper.route_id || this.paper.id;
+    const source = this.paper.source;
+    if (source && source !== "stc") {
+      return `${source}:${rid}`;
+    }
+    return rid;
   }
 
   get currentItems() {

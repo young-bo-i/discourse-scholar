@@ -19,7 +19,7 @@ module DiscourseScholar
         h_index: count_value(raw_author, :h_index, :hIndex),
         orcid: value(raw_author, :orcid),
         url: safe_url(value(raw_author, :url)),
-        path: "/scholar/author/#{route_id(value(raw_author, :id))}",
+        path: "/scholar/author/#{source_path_id(raw_author)}",
         papers: normalized_papers,
       }.compact
     end
@@ -42,7 +42,7 @@ module DiscourseScholar
           year: value(paper, :year),
           venue: value(paper, :venue),
           citation_count: count_value(paper, :citation_count, :citationCount),
-          path: "/scholar/paper/#{route_id(value(paper, :id))}",
+          path: "/scholar/paper/#{source_path_id(paper)}",
         }.compact
       end
     end
