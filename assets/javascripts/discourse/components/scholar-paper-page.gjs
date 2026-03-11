@@ -14,9 +14,12 @@ export default class PaperDetailPage extends Component {
   @tracked abstractExpanded = false;
   @tracked translatedTitle = null;
   @tracked translatedAbstract = null;
-  @tracked translating = false;
-  @tracked translateError = null;
-  @tracked showTranslation = false;
+  @tracked translatingTitle = false;
+  @tracked translatingAbstract = false;
+  @tracked translateTitleError = false;
+  @tracked translateAbstractError = false;
+  @tracked showTranslatedTitle = false;
+  @tracked showTranslatedAbstract = false;
 
   get paper() {
     return this.args.paper || {};
@@ -34,49 +37,58 @@ export default class PaperDetailPage extends Component {
     return this.paper.error_message || i18n("scholar.paper.states.unavailable");
   }
 
-  get hasTranslation() {
-    return this.translatedTitle || this.translatedAbstract;
-  }
-
-  get showTranslatedTitle() {
-    return this.showTranslation && this.translatedTitle;
-  }
-
-  get showTranslatedAbstract() {
-    return this.showTranslation && this.translatedAbstract;
-  }
-
   @action
   toggleAbstract() {
     this.abstractExpanded = !this.abstractExpanded;
   }
 
   @action
-  async translate() {
-    if (this.hasTranslation) {
-      this.showTranslation = !this.showTranslation;
+  async translateTitle() {
+    if (this.translatedTitle) {
+      this.showTranslatedTitle = !this.showTranslatedTitle;
       return;
     }
 
-    this.translating = true;
-    this.translateError = null;
+    this.translatingTitle = true;
+    this.translateTitleError = false;
 
     try {
       const result = await ajax("/scholar/translate.json", {
         type: "POST",
-        data: {
-          title: this.paper.title,
-          abstract: this.paper.abstract,
-        },
+        data: { title: this.paper.title, abstract: "" },
       });
 
       this.translatedTitle = result.translated_title;
-      this.translatedAbstract = result.translated_abstract;
-      this.showTranslation = true;
+      this.showTranslatedTitle = true;
     } catch {
-      this.translateError = true;
+      this.translateTitleError = true;
     } finally {
-      this.translating = false;
+      this.translatingTitle = false;
+    }
+  }
+
+  @action
+  async translateAbstract() {
+    if (this.translatedAbstract) {
+      this.showTranslatedAbstract = !this.showTranslatedAbstract;
+      return;
+    }
+
+    this.translatingAbstract = true;
+    this.translateAbstractError = false;
+
+    try {
+      const result = await ajax("/scholar/translate.json", {
+        type: "POST",
+        data: { title: "", abstract: this.paper.abstract },
+      });
+
+      this.translatedAbstract = result.translated_abstract;
+      this.showTranslatedAbstract = true;
+    } catch {
+      this.translateAbstractError = true;
+    } finally {
+      this.translatingAbstract = false;
     }
   }
 
@@ -104,10 +116,34 @@ export default class PaperDetailPage extends Component {
                 {{/if}}
               </div>
 
-              <h1 class="paper-detail-page__title">{{this.paper.title}}</h1>
-              {{#if this.showTranslatedTitle}}
-                <p class="paper-detail-page__translated-title">{{this.translatedTitle}}</p>
-              {{/if}}
+              <div class="paper-detail-page__title-row">
+                <button
+                  type="button"
+                  class="paper-detail-page__inline-translate-btn
+                    {{if this.showTranslatedTitle '-active'}}
+                    {{if this.translatingTitle '-loading'}}"
+                  title={{i18n "scholar.paper.actions.translate"}}
+                  disabled={{this.translatingTitle}}
+                  {{on "click" this.translateTitle}}
+                >
+                  {{#if this.translatingTitle}}
+                    {{icon "spinner"}}
+                  {{else}}
+                    {{icon "language"}}
+                  {{/if}}
+                </button>
+                <div class="paper-detail-page__title-content">
+                  <h1 class="paper-detail-page__title">{{this.paper.title}}</h1>
+                  {{#if this.showTranslatedTitle}}
+                    <p class="paper-detail-page__translated-title">{{this.translatedTitle}}</p>
+                  {{/if}}
+                  {{#if this.translateTitleError}}
+                    <span class="paper-detail-page__translate-error">
+                      {{i18n "scholar.paper.states.translate_error"}}
+                    </span>
+                  {{/if}}
+                </div>
+              </div>
 
               <div class="paper-detail-page__authors">
                 {{#if this.authors.length}}
@@ -157,35 +193,59 @@ export default class PaperDetailPage extends Component {
               {{/if}}
 
               {{#if this.paper.abstract}}
-                <div
-                  class="paper-detail-page__abstract
-                    {{unless this.abstractExpanded '-collapsed'}}"
-                >
-                  <p>{{this.paper.abstract}}</p>
-                  {{#unless this.abstractExpanded}}
-                    <div class="paper-detail-page__abstract-fade"></div>
-                  {{/unless}}
-                </div>
-                <button
-                  type="button"
-                  class="paper-detail-page__expand-btn"
-                  {{on "click" this.toggleAbstract}}
-                >
-                  {{#if this.abstractExpanded}}
-                    {{i18n "scholar.paper.actions.collapse"}}
-                  {{else}}
-                    {{i18n "scholar.paper.actions.expand"}}
-                  {{/if}}
-                </button>
-                {{#if this.showTranslatedAbstract}}
-                  <div class="paper-detail-page__translated-abstract">
-                    <div class="paper-detail-page__translated-label">
+                <div class="paper-detail-page__abstract-row">
+                  <button
+                    type="button"
+                    class="paper-detail-page__inline-translate-btn
+                      {{if this.showTranslatedAbstract '-active'}}
+                      {{if this.translatingAbstract '-loading'}}"
+                    title={{i18n "scholar.paper.actions.translate"}}
+                    disabled={{this.translatingAbstract}}
+                    {{on "click" this.translateAbstract}}
+                  >
+                    {{#if this.translatingAbstract}}
+                      {{icon "spinner"}}
+                    {{else}}
                       {{icon "language"}}
-                      {{i18n "scholar.paper.translation.label"}}
+                    {{/if}}
+                  </button>
+                  <div class="paper-detail-page__abstract-content">
+                    <div
+                      class="paper-detail-page__abstract
+                        {{unless this.abstractExpanded '-collapsed'}}"
+                    >
+                      <p>{{this.paper.abstract}}</p>
+                      {{#unless this.abstractExpanded}}
+                        <div class="paper-detail-page__abstract-fade"></div>
+                      {{/unless}}
                     </div>
-                    <p>{{this.translatedAbstract}}</p>
+                    <button
+                      type="button"
+                      class="paper-detail-page__expand-btn"
+                      {{on "click" this.toggleAbstract}}
+                    >
+                      {{#if this.abstractExpanded}}
+                        {{i18n "scholar.paper.actions.collapse"}}
+                      {{else}}
+                        {{i18n "scholar.paper.actions.expand"}}
+                      {{/if}}
+                    </button>
+                    {{#if this.showTranslatedAbstract}}
+                      <div class="paper-detail-page__translated-abstract">
+                        <div class="paper-detail-page__translated-label">
+                          {{icon "language"}}
+                          {{i18n "scholar.paper.translation.label"}}
+                        </div>
+                        <p>{{this.translatedAbstract}}</p>
+                      </div>
+                    {{/if}}
+                    {{#if this.translateAbstractError}}
+                      <span class="paper-detail-page__translate-error">
+                        {{i18n "scholar.paper.states.translate_error"}}
+                      </span>
+                    {{/if}}
                   </div>
-                {{/if}}
+                </div>
               {{else}}
                 <p
                   class="paper-detail-page__no-data"
@@ -214,30 +274,6 @@ export default class PaperDetailPage extends Component {
                     {{icon "file-pdf"}}
                     {{i18n "scholar.paper.actions.open_pdf"}}
                   </a>
-                {{/if}}
-                <button
-                  type="button"
-                  class="paper-detail-page__action-btn -translate
-                    {{if this.showTranslation '-active'}}
-                    {{if this.translating '-loading'}}"
-                  disabled={{this.translating}}
-                  {{on "click" this.translate}}
-                >
-                  {{#if this.translating}}
-                    {{icon "spinner"}}
-                    {{i18n "scholar.paper.actions.translating"}}
-                  {{else if this.showTranslation}}
-                    {{icon "language"}}
-                    {{i18n "scholar.paper.actions.hide_translation"}}
-                  {{else}}
-                    {{icon "language"}}
-                    {{i18n "scholar.paper.actions.translate"}}
-                  {{/if}}
-                </button>
-                {{#if this.translateError}}
-                  <span class="paper-detail-page__translate-error">
-                    {{i18n "scholar.paper.states.translate_error"}}
-                  </span>
                 {{/if}}
               </div>
             </article>

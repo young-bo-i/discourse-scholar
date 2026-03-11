@@ -303,6 +303,36 @@ body.scholar-active {
   font-size: 1.05rem;
 }
 
+.scholar-home-page__source-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-low);
+}
+
+.scholar-home-page__source-tab {
+  padding: 0.5rem 1.5rem;
+  font-size: var(--font-up-1);
+  font-weight: 500;
+  color: var(--primary-medium);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover {
+    color: var(--primary);
+  }
+
+  &.-active {
+    color: var(--tertiary);
+    border-bottom-color: var(--tertiary);
+  }
+}
+
 .scholar-home-page__search {
   width: 100%;
 }
@@ -546,7 +576,7 @@ body.scholar-active {
     }
   }
 
-  &.-translate {
+  &.-translate-legacy {
     border-color: var(--scholar-border);
     color: var(--scholar-text-secondary);
 
@@ -623,6 +653,63 @@ body.scholar-active {
 
   .d-icon {
     font-size: 0.85em;
+  }
+}
+
+.paper-detail-page__title-row,
+.paper-detail-page__abstract-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.paper-detail-page__title-content,
+.paper-detail-page__abstract-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.paper-detail-page__inline-translate-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 0.15rem;
+  padding: 0;
+  border: 1px solid var(--scholar-border);
+  border-radius: 6px;
+  background: none;
+  color: var(--scholar-text-light);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+
+  .d-icon {
+    font-size: 0.85rem;
+  }
+
+  &:hover {
+    color: #10b981;
+    border-color: #10b981;
+    background: color-mix(in srgb, #10b981 8%, transparent);
+  }
+
+  &.-active {
+    color: #10b981;
+    border-color: #10b981;
+    background: color-mix(in srgb, #10b981 10%, transparent);
+  }
+
+  &.-loading {
+    .d-icon {
+      animation: scholar-spin 1s linear infinite;
+    }
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.7;
   }
 }
 
