@@ -269,7 +269,6 @@ body.scholar-active {
   flex-direction: column;
   align-items: center;
   padding: 0 1.25rem 4rem;
-  overflow: hidden;
 }
 
 .scholar-home-page__bg-glow {
@@ -287,6 +286,7 @@ body.scholar-active {
   );
   pointer-events: none;
   z-index: 0;
+  clip-path: inset(0);
 }
 
 .scholar-home-page__hero {
@@ -399,6 +399,8 @@ body.scholar-active {
 }
 
 .scholar-home-page__search {
+  position: relative;
+  z-index: 10;
   width: 100%;
 
   .scholar-search-box__form {
@@ -1848,7 +1850,7 @@ input.scholar-search-box__input[type="search"] {
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  max-height: min(480px, calc(100vh - 200px));
+  max-height: min(420px, 50vh);
   overflow-y: auto;
   background: var(--scholar-card-bg);
   border: 1px solid var(--scholar-border);
