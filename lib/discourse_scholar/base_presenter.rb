@@ -28,5 +28,14 @@ module DiscourseScholar
     def route_id(raw_id)
       raw_id.to_s.split(":", 2).last
     end
+
+    def count_value(object, *keys)
+      keys.each do |key|
+        raw = value(object, key)
+        return raw.to_i if raw.present?
+      end
+
+      nil
+    end
   end
 end

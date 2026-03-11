@@ -12,8 +12,12 @@ module DiscourseScholar
       end
 
       def papers_as_json(items)
-        new.send(:normalize_papers, items)
+        new.normalize_paper_list(items)
       end
+    end
+
+    def normalize_paper_list(items)
+      normalize_papers(items)
     end
 
     def results_as_json(results, query, page: 1, per_page: 10)
@@ -122,13 +126,6 @@ module DiscourseScholar
       end
     end
 
-    def normalize_authors_for_paper(paper)
-      Array(value(paper, :authors)).filter_map do |author|
-        source = author["author"] || author[:author] || author
-        value(source, :name)
-      end
-    end
-
     def normalize_authors_with_ids(paper)
       Array(value(paper, :authors)).filter_map do |author|
         source = author["author"] || author[:author] || author
@@ -142,15 +139,6 @@ module DiscourseScholar
         end
         entry
       end
-    end
-
-    def count_value(object, *keys)
-      keys.each do |key|
-        raw = value(object, key)
-        return raw.to_i if raw.present?
-      end
-
-      nil
     end
   end
 end

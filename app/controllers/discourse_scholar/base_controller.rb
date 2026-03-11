@@ -32,8 +32,21 @@ module DiscourseScholar
       ).performed!
     end
 
-    def cached_json(cache_key, expires_in: CACHE_TTL)
-      Rails.cache.fetch(cache_key, expires_in:) { yield }
+    def cached_json(cache_key, expires_in: CACHE_TTL, rate_limit_scope: nil)
+      Rails.cache.fetch(cache_key, expires_in:) do
+        perform_rate_limit!(rate_limit_scope) if rate_limit_scope
+        yield
+      end
+    end
+
+    def with_upstream_error_handling
+      yield
+    rescue DiscourseScholar::BaseClient::MissingConfiguration => e
+      render_json_error(e.message, status: 503)
+    rescue DiscourseScholar::BaseClient::ResourceNotFound => e
+      render_json_error(e.message, status: 404)
+    rescue DiscourseScholar::BaseClient::UpstreamError => e
+      render_json_error(e.message, status: 502)
     end
   end
 end

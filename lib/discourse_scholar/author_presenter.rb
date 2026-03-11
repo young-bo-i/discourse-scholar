@@ -28,15 +28,6 @@ module DiscourseScholar
 
     attr_reader :raw_author, :raw_papers
 
-    def count_value(object, *keys)
-      keys.each do |key|
-        raw = value(object, key)
-        return raw.to_i if raw.present?
-      end
-
-      nil
-    end
-
     def normalized_papers
       items = raw_papers["items"] || raw_papers[:items] || raw_papers["data"] || []
 

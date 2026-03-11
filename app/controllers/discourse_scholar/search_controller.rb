@@ -17,17 +17,13 @@ module DiscourseScholar
         return render json: DiscourseScholar::SearchPresenter.autocomplete_as_json({}, normalized_query)
       end
 
-      perform_rate_limit!("autocomplete")
+      with_upstream_error_handling do
+        perform_rate_limit!("autocomplete")
 
-      results = cached_json(autocomplete_cache_key, expires_in: AUTOCOMPLETE_CACHE_TTL) do
-        DiscourseScholar::SearchClient.new.autocomplete(normalized_query)
+        results = DiscourseScholar::SearchClient.new.autocomplete(normalized_query)
+
+        render json: DiscourseScholar::SearchPresenter.autocomplete_as_json(results, normalized_query)
       end
-
-      render json: DiscourseScholar::SearchPresenter.autocomplete_as_json(results, normalized_query)
-    rescue DiscourseScholar::BaseClient::MissingConfiguration => e
-      render_json_error(e.message, status: 503)
-    rescue DiscourseScholar::BaseClient::UpstreamError => e
-      render_json_error(e.message, status: 502)
     end
 
     private
@@ -41,27 +37,15 @@ module DiscourseScholar
         return render json: DiscourseScholar::SearchPresenter.results_as_json({}, normalized_query, page: 1, per_page:)
       end
 
-      perform_rate_limit!("search")
+      with_upstream_error_handling do
+        perform_rate_limit!("search")
 
-      offset = (page - 1) * per_page
-      results = cached_json(search_cache_key(normalized_query, page)) do
-        DiscourseScholar::SearchClient.new.search(normalized_query, offset:)
+        offset = (page - 1) * per_page
+        results = DiscourseScholar::SearchClient.new.search(normalized_query, offset:)
+
+        discourse_expires_in 2.minutes
+        render json: DiscourseScholar::SearchPresenter.results_as_json(results, normalized_query, page:, per_page:)
       end
-
-      discourse_expires_in 2.minutes
-      render json: DiscourseScholar::SearchPresenter.results_as_json(results, normalized_query, page:, per_page:)
-    rescue DiscourseScholar::BaseClient::MissingConfiguration => e
-      render_json_error(e.message, status: 503)
-    rescue DiscourseScholar::BaseClient::UpstreamError => e
-      render_json_error(e.message, status: 502)
-    end
-
-    def autocomplete_cache_key
-      "discourse-scholar:autocomplete:#{normalized_query_param.downcase}"
-    end
-
-    def search_cache_key(query, page = 1)
-      "discourse-scholar:search:#{query.downcase}:p#{page}"
     end
 
     def normalized_query_param

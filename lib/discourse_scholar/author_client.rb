@@ -27,10 +27,11 @@ module DiscourseScholar
       }) || {}
     end
 
-    private
-
-    def route_id(author_id)
-      author_id.to_s.split(":", 2).last
+    def fetch_with_papers(author_id, papers_limit: 12)
+      parallel_map(
+        author: -> { fetch(author_id) },
+        papers: -> { fetch_papers(author_id, limit: papers_limit) },
+      )
     end
   end
 end

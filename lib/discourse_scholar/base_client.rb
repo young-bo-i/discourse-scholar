@@ -14,14 +14,72 @@ module DiscourseScholar
     class ResourceNotFound < Error; end
     class UpstreamError < Error; end
 
+    @connection_mutex = Mutex.new
+
+    class << self
+      def reset_connection!
+        @connection_mutex.synchronize do
+          @shared_connection = nil
+          @cached_base_url = nil
+        end
+      end
+
+      def shared_connection
+        @connection_mutex.synchronize do
+          base_url = validated_base_url
+          if @shared_connection.nil? || @cached_base_url != base_url
+            @cached_base_url = base_url
+            @shared_connection =
+              Faraday.new(
+                url: base_url,
+                request: {
+                  open_timeout: OPEN_TIMEOUT_SECONDS,
+                  timeout: READ_TIMEOUT_SECONDS,
+                },
+              )
+          end
+          @shared_connection
+        end
+      end
+
+      def api_key
+        key =
+          ENV["DISCOURSE_SCHOLAR_API_KEY"].presence || SiteSetting.discourse_scholar_api_key
+        if key.blank?
+          raise MissingConfiguration, I18n.t("discourse_scholar.errors.missing_api_key")
+        end
+        key
+      end
+
+      def validated_base_url
+        uri = URI.parse(SiteSetting.discourse_scholar_api_base_url)
+        host = uri.host&.downcase
+
+        if !uri.is_a?(URI::HTTPS) || host.blank? || !ALLOWED_HOSTS.include?(host) || uri.user ||
+             uri.password || uri.query || uri.fragment
+          raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
+        end
+
+        base_url = "#{uri.scheme}://#{host}"
+        base_url += ":#{uri.port}" if uri.port.present? && uri.port != 443
+
+        normalized_path = uri.path.presence == "/" ? nil : uri.path.presence&.sub(%r{/*$}, "")
+        base_url += normalized_path if normalized_path.present?
+
+        base_url
+      rescue URI::InvalidURIError
+        raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
+      end
+    end
+
     protected
 
     def post_json(path, body)
       response =
-        connection.post(path) do |request|
+        self.class.shared_connection.post(path) do |request|
           request.headers["Content-Type"] = "application/json"
           request.headers["Accept"] = "application/json"
-          request.headers["Authorization"] = "Bearer #{api_key}"
+          request.headers["Authorization"] = "Bearer #{self.class.api_key}"
           request.body = body.to_json
         end
 
@@ -54,49 +112,11 @@ module DiscourseScholar
       end
     end
 
+    def route_id(raw_id)
+      raw_id.to_s.split(":", 2).last
+    end
+
     private
-
-    def connection
-      @connection ||=
-        Faraday.new(
-          url: validated_base_url,
-          request: {
-            open_timeout: OPEN_TIMEOUT_SECONDS,
-            timeout: READ_TIMEOUT_SECONDS,
-          },
-        )
-    end
-
-    def api_key
-      key =
-        ENV["DISCOURSE_SCHOLAR_API_KEY"].presence || SiteSetting.discourse_scholar_api_key
-
-      if key.blank?
-        raise MissingConfiguration, I18n.t("discourse_scholar.errors.missing_api_key")
-      end
-
-      key
-    end
-
-    def validated_base_url
-      uri = URI.parse(SiteSetting.discourse_scholar_api_base_url)
-      host = uri.host&.downcase
-
-      if !uri.is_a?(URI::HTTPS) || host.blank? || !ALLOWED_HOSTS.include?(host) || uri.user ||
-           uri.password || uri.query || uri.fragment
-        raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
-      end
-
-      base_url = "#{uri.scheme}://#{host}"
-      base_url += ":#{uri.port}" if uri.port.present? && uri.port != 443
-
-      normalized_path = uri.path.presence == "/" ? nil : uri.path.presence&.sub(%r{/*$}, "")
-      base_url += normalized_path if normalized_path.present?
-
-      base_url
-    rescue URI::InvalidURIError
-      raise MissingConfiguration, I18n.t("discourse_scholar.errors.invalid_base_url")
-    end
 
     def parse_json(body)
       JSON.parse(body)

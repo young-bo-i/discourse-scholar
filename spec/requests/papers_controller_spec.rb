@@ -4,7 +4,8 @@ RSpec.describe DiscourseScholar::PapersController do
   before do
     SiteSetting.discourse_scholar_enabled = true
     SiteSetting.discourse_scholar_api_base_url = "https://open.scholay.com"
-    SiteSetting.discourse_scholar_api_proxy_secret = "proxy-secret"
+    SiteSetting.discourse_scholar_api_key = "sk-test-key"
+    DiscourseScholar::BaseClient.reset_connection!
   end
 
   describe "GET /scholar/paper/:id" do
@@ -20,7 +21,7 @@ RSpec.describe DiscourseScholar::PapersController do
         headers: {
           "Content-Type" => "application/json",
           "Accept" => "application/json",
-          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
+          "Authorization" => "Bearer sk-test-key",
         },
         body: {
           id: "example-paper",
@@ -86,14 +87,14 @@ RSpec.describe DiscourseScholar::PapersController do
       expect(response.status).to eq(404)
     end
 
-    it "returns 503 when the proxy secret has not been configured" do
-      SiteSetting.discourse_scholar_api_proxy_secret = ""
+    it "returns 503 when the API key has not been configured" do
+      SiteSetting.discourse_scholar_api_key = ""
 
       get "/scholar/paper/example-paper.json"
 
       expect(response.status).to eq(503)
       expect(response.parsed_body["errors"]).to include(
-        I18n.t("discourse_scholar.errors.missing_proxy_secret"),
+        I18n.t("discourse_scholar.errors.missing_api_key"),
       )
     end
   end

@@ -4,7 +4,8 @@ RSpec.describe DiscourseScholar::SearchController do
   before do
     SiteSetting.discourse_scholar_enabled = true
     SiteSetting.discourse_scholar_api_base_url = "https://open.scholay.com"
-    SiteSetting.discourse_scholar_api_proxy_secret = "proxy-secret"
+    SiteSetting.discourse_scholar_api_key = "sk-test-key"
+    DiscourseScholar::BaseClient.reset_connection!
   end
 
   describe "GET /scholar/search" do
@@ -12,7 +13,7 @@ RSpec.describe DiscourseScholar::SearchController do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/search").with(
         body: {
           query: "attention",
-          limit: 8,
+          limit: DiscourseScholar::SearchClient::SEARCH_PAPER_LIMIT,
           offset: 0,
           fields: DiscourseScholar::SEARCH_PAPER_FIELDS.join(","),
         }.to_json,
@@ -39,9 +40,9 @@ RSpec.describe DiscourseScholar::SearchController do
       stub_request(:post, "https://open.scholay.com/v1/stc/authors/search").with(
         body: {
           query: "attention",
-          limit: 5,
+          limit: DiscourseScholar::SearchClient::SEARCH_AUTHOR_LIMIT,
           offset: 0,
-          fields: DiscourseScholar::AUTOCOMPLETE_AUTHOR_FIELDS.join(","),
+          fields: DiscourseScholar::SEARCH_AUTHOR_FIELDS.join(","),
         }.to_json,
       ).to_return(
         status: 200,
@@ -52,12 +53,7 @@ RSpec.describe DiscourseScholar::SearchController do
           code: 0,
           data: {
             items: [
-              {
-                id: "stc:author-1",
-                name: "Ashish Vaswani",
-                affiliations: ["Google Brain"],
-                paperCount: 50,
-              },
+              { id: "stc:author-1", name: "Ashish Vaswani", affiliations: ["Google Brain"] },
             ],
           },
         }.to_json,
@@ -76,7 +72,7 @@ RSpec.describe DiscourseScholar::SearchController do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/autocomplete").with(
         body: {
           query: "attention",
-          limit: 5,
+          limit: DiscourseScholar::SearchClient::AUTOCOMPLETE_PAPER_LIMIT,
         }.to_json,
       ).to_return(
         status: 200,
@@ -92,9 +88,9 @@ RSpec.describe DiscourseScholar::SearchController do
       stub_request(:post, "https://open.scholay.com/v1/stc/authors/search").with(
         body: {
           query: "attention",
-          limit: 5,
+          limit: DiscourseScholar::SearchClient::SEARCH_AUTHOR_LIMIT,
           offset: 0,
-          fields: DiscourseScholar::SEARCH_AUTHOR_FIELDS.join(","),
+          fields: DiscourseScholar::AUTOCOMPLETE_AUTHOR_FIELDS.join(","),
         }.to_json,
       ).to_return(
         status: 200,
@@ -115,8 +111,8 @@ RSpec.describe DiscourseScholar::SearchController do
       expect(response.parsed_body["items"].map { |item| item["type"] }).to include("paper", "author")
     end
 
-    it "returns 503 when the proxy secret is missing" do
-      SiteSetting.discourse_scholar_api_proxy_secret = ""
+    it "returns 503 when the API key is missing" do
+      SiteSetting.discourse_scholar_api_key = ""
 
       get "/scholar/autocomplete.json", params: { q: "attention" }
 

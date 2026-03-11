@@ -6,7 +6,7 @@ RSpec.describe DiscourseScholar::PaperClient do
   before do
     SiteSetting.discourse_scholar_api_base_url = "https://open.scholay.com"
     SiteSetting.discourse_scholar_api_key = "scholar-api-key"
-    SiteSetting.discourse_scholar_api_proxy_secret = "proxy-secret"
+    DiscourseScholar::BaseClient.reset_connection!
   end
 
   describe "#fetch" do
@@ -14,7 +14,6 @@ RSpec.describe DiscourseScholar::PaperClient do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/get").with(
         headers: {
           "Authorization" => "Bearer scholar-api-key",
-          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
         },
         body: {
           id: "paper-1",
@@ -42,7 +41,6 @@ RSpec.describe DiscourseScholar::PaperClient do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/get").with(
         headers: {
           "Authorization" => "Bearer scholar-api-key",
-          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
         },
         body: {
           id: "missing-paper",
@@ -66,7 +64,6 @@ RSpec.describe DiscourseScholar::PaperClient do
       stub_request(:post, "https://open.scholay.com/v1/stc/papers/get").with(
         headers: {
           "Authorization" => "Bearer scholar-api-key",
-          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
         },
         body: {
           id: "paper-1",
@@ -97,11 +94,11 @@ RSpec.describe DiscourseScholar::PaperClient do
 
     it "allows an OpenScholay base URL with a path prefix and mixed-case host" do
       SiteSetting.discourse_scholar_api_base_url = "https://OPEN.SCHOLAY.COM/proxy"
+      DiscourseScholar::BaseClient.reset_connection!
 
       stub_request(:post, "https://open.scholay.com/proxy/v1/stc/papers/get").with(
         headers: {
           "Authorization" => "Bearer scholar-api-key",
-          "X-RapidAPI-Proxy-Secret" => "proxy-secret",
         },
         body: {
           id: "paper-1",

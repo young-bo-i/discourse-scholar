@@ -17,7 +17,7 @@ RSpec.describe DiscourseScholar::SearchPresenter do
         "attention",
       )
 
-    expect(result[:items].map { |item| item[:type] }).to eq(%w[paper author])
-    expect(result[:items].last[:path]).to eq("/scholar/author/author-1")
+    expect(result[:items].map { |item| item[:type] }).to eq(%w[author paper])
+    expect(result[:items].first[:path]).to eq("/scholar/author/author-1")
   end
 end

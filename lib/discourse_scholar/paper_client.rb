@@ -62,11 +62,5 @@ module DiscourseScholar
         data
       end
     end
-
-    private
-
-    def route_id(paper_id)
-      paper_id.to_s.split(":", 2).last
-    end
   end
 end

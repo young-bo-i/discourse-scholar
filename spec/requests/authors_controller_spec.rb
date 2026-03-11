@@ -4,7 +4,8 @@ RSpec.describe DiscourseScholar::AuthorsController do
   before do
     SiteSetting.discourse_scholar_enabled = true
     SiteSetting.discourse_scholar_api_base_url = "https://open.scholay.com"
-    SiteSetting.discourse_scholar_api_proxy_secret = "proxy-secret"
+    SiteSetting.discourse_scholar_api_key = "sk-test-key"
+    DiscourseScholar::BaseClient.reset_connection!
   end
 
   describe "GET /scholar/author/:id" do

@@ -29,40 +29,28 @@ module DiscourseScholar
     private
 
     def render_paper_json
-      perform_rate_limit!("paper")
+      with_upstream_error_handling do
+        paper = cached_json(cache_key(params[:id]), rate_limit_scope: "paper") do
+          DiscourseScholar::PaperClient.new.fetch(params[:id])
+        end
 
-      paper = cached_json(cache_key(params[:id])) do
-        DiscourseScholar::PaperClient.new.fetch(params[:id])
+        discourse_expires_in 5.minutes
+        render json: DiscourseScholar::PaperPresenter.new(paper).as_json
       end
-
-      discourse_expires_in 5.minutes
-      render json: DiscourseScholar::PaperPresenter.new(paper).as_json
-    rescue DiscourseScholar::BaseClient::MissingConfiguration => e
-      render_json_error(e.message, status: 503)
-    rescue DiscourseScholar::BaseClient::ResourceNotFound => e
-      render_json_error(e.message, status: 404)
-    rescue DiscourseScholar::BaseClient::UpstreamError => e
-      render_json_error(e.message, status: 502)
     end
 
     def render_related_papers(kind)
-      perform_rate_limit!("paper_#{kind}")
+      with_upstream_error_handling do
+        data = cached_json("discourse-scholar:paper:#{kind}:#{params[:id]}", rate_limit_scope: "paper_#{kind}") do
+          yield DiscourseScholar::PaperClient.new, params[:id]
+        end
 
-      data = cached_json("discourse-scholar:paper:#{kind}:#{params[:id]}") do
-        yield DiscourseScholar::PaperClient.new, params[:id]
+        items = data.is_a?(Hash) ? (data["items"] || data[:items] || []) : Array(data)
+        papers = DiscourseScholar::SearchPresenter.papers_as_json(items)
+
+        discourse_expires_in 5.minutes
+        render json: { papers: papers }
       end
-
-      items = data.is_a?(Hash) ? (data["items"] || data[:items] || []) : Array(data)
-      papers = DiscourseScholar::SearchPresenter.papers_as_json(items)
-
-      discourse_expires_in 5.minutes
-      render json: { papers: papers }
-    rescue DiscourseScholar::BaseClient::MissingConfiguration => e
-      render_json_error(e.message, status: 503)
-    rescue DiscourseScholar::BaseClient::ResourceNotFound => e
-      render_json_error(e.message, status: 404)
-    rescue DiscourseScholar::BaseClient::UpstreamError => e
-      render_json_error(e.message, status: 502)
     end
 
     def cache_key(paper_id)
