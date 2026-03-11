@@ -27,6 +27,9 @@ register_svg_icon "xmark"
 register_svg_icon "file-lines"
 register_svg_icon "language"
 register_svg_icon "spinner"
+register_svg_icon "book-open-reader"
+register_svg_icon "globe"
+register_svg_icon "lightbulb"
 
 module ::DiscourseScholar
   PLUGIN_NAME = "discourse-scholar"

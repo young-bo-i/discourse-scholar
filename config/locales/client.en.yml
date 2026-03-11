@@ -20,6 +20,9 @@ en:
         search_papers_desc: "Find academic papers by keyword, title, or topic"
         search_authors: "Search Authors"
         search_authors_desc: "Discover researchers and their publications"
+        source_desc_stc: "200M+ papers with deep citation networks"
+        source_desc_olx: "250M+ open works across all disciplines"
+        hint: "Try searching for a topic, paper title, or author name"
       search:
         placeholder: "Search papers or authors..."
         loading: "Loading suggestions..."
@@ -33,8 +36,8 @@ en:
           paper: "Paper"
           author: "Author"
         sources:
-          stc: "Semantic Scholar"
-          olx: "OpenAlex"
+          stc: "Citation Graph"
+          olx: "Open Research"
         suggestions:
           matching_authors: "Matching Authors"
           matching_papers: "Matching Papers"
